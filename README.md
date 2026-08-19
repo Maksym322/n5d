@@ -1,6 +1,6 @@
 # N5Deal Marketplace — Prototype
 
-**Live demo:** `<[fill in after deploy](https://n5-gamma.vercel.app/)>` · **Repository:** `<fill in>`
+**Live demo:** https://n5-gamma.vercel.app · **Repository:** https://github.com/Maksym322/n5deal-marketplace
 
 A confidential M&A marketplace connecting business owners (**Sellers**) with investors (**Buyers**) under a **Platform Manager**. Its defining constraint is that **confidentiality runs in both directions**: neither side is identified until a contact request is *accepted*, at which point *both* identities are revealed at once. Every structural decision follows from that.
 
