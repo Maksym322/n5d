@@ -1,0 +1,148 @@
+{
+  "dashboard": {
+    "title": "Seller dashboard",
+    "subtitle": "Your listings and the requests waiting on you.",
+    "newAsset": "New asset",
+    "stats": {
+      "total": "Total assets",
+      "published": "Published",
+      "drafts": "Drafts",
+      "incoming": "Incoming"
+    },
+    "incomingTitle": "Requests needing a response",
+    "incomingEmpty": "No incoming requests right now.",
+    "assetsTitle": "Your assets",
+    "noAssetsTitle": "No assets yet",
+    "noAssetsBody": "Create your first listing to start receiving buyer interest.",
+    "groupCount": "{count, plural, one {# asset} other {# assets}}",
+    "edit": "Edit",
+    "publish": "Publish",
+    "markSold": "Mark as sold",
+    "unpublish": "Move to draft",
+    "statusError": "Couldn’t update. Please try again.",
+    "listedOn": "listed {date}",
+    "anonymousCounterparty": "Anonymous buyer",
+    "openThread": "Open"
+  },
+  "status": {
+    "DRAFT": "Draft",
+    "PUBLISHED": "Published",
+    "SUSPENDED": "Suspended",
+    "SOLD": "Sold"
+  },
+  "assetForm": {
+    "back": "Back to dashboard",
+    "newTitle": "New asset",
+    "newSubtitle": "Draft a listing. It stays private until you publish.",
+    "editTitle": "Edit Asset {ref}",
+    "editSubtitle": "Update the listing. Changes go live once it is published."
+  },
+  "form": {
+    "title": "Title",
+    "titlePlaceholder": "e.g. Profitable EMI with EU passporting",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe the business, its strengths and the opportunity…",
+    "category": "Category",
+    "jurisdiction": "Jurisdiction",
+    "dealType": "Deal type",
+    "revenue": "Revenue (€)",
+    "ebitda": "EBITDA (€)",
+    "askingPrice": "Asking price (€)",
+    "euroHint": "In euros. Leave blank if not disclosed.",
+    "employees": "Employees",
+    "yearFounded": "Year founded",
+    "highlights": "Highlights",
+    "highlightsHint": "Short selling points shown as pills on the listing.",
+    "highlightPlaceholder": "e.g. Recurring revenue",
+    "addHighlight": "Add highlight",
+    "removeHighlight": "Remove highlight",
+    "priceHistory": "Market trend (6 years)",
+    "priceHistoryHint": "Annual values in euros for the trend chart. Generate a starting curve, then adjust.",
+    "generatePriceHistory": "Generate",
+    "saveDraft": "Save draft",
+    "publish": "Publish",
+    "saved": "Saved.",
+    "checkFailed": "Some values are out of range. Please check and try again.",
+    "notAllowed": "You can’t edit this asset right now.",
+    "invalid": "Please check the highlighted fields.",
+    "error": "Couldn’t save. Please try again."
+  },
+  "profile": {
+    "title": "Your seller profile",
+    "subtitle": "Buyers see your public trading profile. Your identity is revealed only when you accept a request.",
+    "public": {
+      "title": "Public — visible to every buyer",
+      "note": "Your anonymous trading profile. Never put a company name here."
+    },
+    "private": {
+      "title": "Private — revealed only on acceptance",
+      "note": "Your legal identity. Shared with a counterparty only when a contact request is accepted."
+    },
+    "form": {
+      "headline": "Headline",
+      "headlinePlaceholder": "e.g. Owner-operator, two payment businesses",
+      "jurisdiction": "Jurisdiction",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe your business anonymously…",
+      "companyName": "Company name",
+      "registrationNumber": "Registration number",
+      "website": "Website",
+      "contactName": "Contact person",
+      "save": "Save profile",
+      "saving": "Saving…",
+      "saved": "Profile saved.",
+      "invalid": "Please check the highlighted fields.",
+      "error": "Couldn’t save. Please try again."
+    }
+  },
+  "buyers": {
+    "title": "Buyer directory",
+    "subtitle": "Anonymised investor mandates. Company names are never shown — reach out to reveal identities on acceptance.",
+    "results": "{count, plural, =0 {No buyers} one {# buyer} other {# buyers}}",
+    "card": {
+      "investorType": "Investor type",
+      "ticket": "Ticket size",
+      "categories": "Categories",
+      "jurisdictions": "Jurisdictions",
+      "any": "Any"
+    },
+    "filters": {
+      "toggle": "Filters",
+      "heading": "Refine",
+      "jurisdiction": "Jurisdiction",
+      "any": "Any",
+      "ticketMin": "Min ticket (€)",
+      "ticketMax": "Max ticket (€)",
+      "apply": "Apply",
+      "clear": "Clear all"
+    },
+    "empty": {
+      "title": "No buyers match your filters",
+      "generic": "Try widening your search.",
+      "widenTicket": "Try widening or clearing the ticket range.",
+      "widenJurisdiction": "Try removing the jurisdiction filter.",
+      "widenCategory": "Try selecting the All category.",
+      "clear": "Clear all filters"
+    },
+    "detail": {
+      "back": "Back to buyers",
+      "anonymousNote": "This buyer stays anonymous until they accept your request. Both identities are revealed at the same moment.",
+      "mandate": "Investment mandate"
+    },
+    "contact": {
+      "heading": "Contact this buyer",
+      "anonymousNote": "You stay anonymous until they accept. Both identities are revealed at the same moment.",
+      "quota": "{count} of {max} requests active",
+      "openingLabel": "Opening message",
+      "openingPlaceholder": "Introduce your opportunity and why it fits their mandate…",
+      "send": "Send request",
+      "sending": "Sending…",
+      "success": "Request sent — track it in Messages.",
+      "goToMessages": "Go to messages",
+      "quotaExceeded": "You already have {max} pending requests. Wait for one to be accepted or declined before sending another.",
+      "alreadyExists": "You already have a conversation with this buyer.",
+      "notAllowed": "You can’t send this request right now.",
+      "error": "Something went wrong. Please try again."
+    }
+  }
+}

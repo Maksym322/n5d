@@ -1,0 +1,125 @@
+{
+  "nav": {
+    "assets": "Assets",
+    "dashboard": "Dashboard",
+    "buyers": "Buyers",
+    "messages": "Messages",
+    "profile": "Profile"
+  },
+  "catalogue": {
+    "title": "Assets",
+    "subtitle": "Confidential M&A opportunities. The seller stays anonymous until you connect.",
+    "results": "{count, plural, =0 {No assets} one {# asset} other {# assets}}"
+  },
+  "search": {
+    "placeholder": "Find the perfect asset…",
+    "label": "Search assets"
+  },
+  "categories": {
+    "all": "All",
+    "label": "Category"
+  },
+  "filters": {
+    "toggle": "Filters",
+    "heading": "Refine",
+    "jurisdiction": "Jurisdiction",
+    "dealType": "Deal type",
+    "priceMin": "Min price (€)",
+    "priceMax": "Max price (€)",
+    "any": "Any",
+    "apply": "Apply",
+    "clear": "Clear all"
+  },
+  "sort": {
+    "label": "Sort",
+    "newest": "Newest",
+    "price_asc": "Price: low to high",
+    "price_desc": "Price: high to low"
+  },
+  "listing": {
+    "ref": "Asset {ref}",
+    "date": "Listed {date}",
+    "country": "Country",
+    "category": "Category",
+    "dealType": "Deal type",
+    "employees": "Employees",
+    "yearFounded": "Founded",
+    "revenue": "Revenue",
+    "ebitda": "EBITDA",
+    "askingPrice": "Asking price",
+    "validated": "Validated",
+    "highlights": "Highlights",
+    "views": "{count, plural, one {# view} other {# views}}",
+    "viewAsset": "View asset",
+    "contactSeller": "Contact seller",
+    "na": "N/A",
+    "more": "+{count}"
+  },
+  "chart": {
+    "title": "Market Trend",
+    "empty": "No trend data"
+  },
+  "detail": {
+    "back": "Back to assets",
+    "about": "About this asset",
+    "keyFacts": "Key facts",
+    "sellerProfile": "Seller profile",
+    "sellerVerified": "Verified seller",
+    "highlights": "Highlights",
+    "notFound": "This asset isn’t available."
+  },
+  "contact": {
+    "heading": "Contact seller",
+    "anonymousNote": "The seller stays anonymous until they accept. Both identities are revealed at the same moment.",
+    "quota": "{count} of {max} requests active",
+    "quotaHint": "You can hold up to {max} pending requests at once.",
+    "openingLabel": "Opening message",
+    "openingPlaceholder": "Introduce yourself and your interest in this asset…",
+    "send": "Send request",
+    "sending": "Sending…",
+    "success": "Request sent — track it in Messages.",
+    "goToMessages": "Go to messages",
+    "quotaExceeded": "You already have {max} pending requests. Wait for one to be accepted or declined before sending another.",
+    "alreadyExists": "You already have a conversation about this asset.",
+    "notAllowed": "You can’t send this request right now.",
+    "error": "Something went wrong. Please try again.",
+    "signInFirst": "Sign in as a buyer to contact sellers.",
+    "buyersOnly": "Only buyers can send contact requests."
+  },
+  "empty": {
+    "title": "No assets match your filters",
+    "generic": "Try widening your search.",
+    "widenPrice": "Try raising the maximum price or clearing the price range.",
+    "widenJurisdiction": "Try removing the jurisdiction filter.",
+    "widenCategory": "Try selecting the All category.",
+    "widenSearch": "Try a shorter or different search term.",
+    "clear": "Clear all filters"
+  },
+  "pagination": {
+    "prev": "Previous",
+    "next": "Next"
+  },
+  "enums": {
+    "category": {
+      "BANK": "Bank",
+      "FINTECH": "Fintech",
+      "PAYMENT": "Payment",
+      "EMI": "EMI",
+      "CRYPTO": "Crypto",
+      "OTHER": "Other"
+    },
+    "dealType": {
+      "FULL_ACQUISITION": "Full acquisition",
+      "MAJORITY_STAKE": "Majority stake",
+      "MINORITY_STAKE": "Minority stake",
+      "ASSET_DEAL": "Asset deal"
+    },
+    "investorType": {
+      "PE_FUND": "PE fund",
+      "STRATEGIC": "Strategic",
+      "FAMILY_OFFICE": "Family office",
+      "SEARCH_FUND": "Search fund",
+      "ANGEL": "Angel"
+    }
+  }
+}

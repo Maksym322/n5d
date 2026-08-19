@@ -2,7 +2,7 @@
 
 Every entry states the alternative that was rejected. An entry without an alternative is a note, not a decision.
 
-Stack: Next.js 15 (App Router) · TypeScript strict · Supabase (Postgres + Auth + Realtime) · Tailwind v4 · shadcn/ui · next-intl · Vitest · Playwright · Vercel.
+Stack: Next.js 15 (App Router) · TypeScript strict · Supabase (Postgres + Auth + Realtime) · Tailwind v4 · in-house UI primitives (ADR-17) · next-intl · Vitest · Playwright · Vercel.
 
 ---
 
@@ -189,3 +189,33 @@ The chart is rendered from a `price_history` JSONB column seeded with six annual
 **Decision:** category pills carry counts, recomputed with the active filter set applied, in one grouped query alongside the results query.
 
 **Why:** counts that ignore active filters are worse than no counts — they promise results that a click then fails to deliver. Recomputing them is a single `group by` on an already-indexed column, so correctness here is nearly free.
+
+**Implementation.** PostgREST/`supabase-js` cannot express `group by`, and adding an aggregate RPC would mean a migration (out of scope for the buyer build). So `getCategoryFacets` issues one `select("category")` under every active filter *except category itself* and buckets the rows in JS over the `asset_category` enum. At ~28 published rows this is a single small round-trip — indistinguishable in cost from a grouped query. The change point is roughly the first few thousand assets, or the first time the category column stops fitting comfortably in one response: at that scale this becomes a `security definer` RPC running `select category, count(*) ... group by category`, called in place of the JS bucketing with no change to callers.
+
+---
+
+## ADR-17. In-house UI primitives, not a component library
+
+**Alternative:** shadcn/ui (its generated primitives + `@radix-ui/*`, `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react`).
+
+**Decision:** a small set of hand-written primitives in `components/ui/` (Button, Input, Select, Checkbox, Badge, Field, an inline-SVG icon set, and a tiny `cn` helper), built on native elements and the Tailwind v4 `@theme` tokens. No component-library or icon-library dependency.
+
+**Why:** the foundation phase already styled its shell with raw Tailwind and the design tokens, and the marketplace's distinctive surfaces — the full-width listing row, the two-row attribute grid, the inline-SVG trend chart (ADR-15) — are bespoke regardless of any library. What remains is a handful of form controls and badges that native elements plus tokens cover directly. Pulling in Radix + cva + tailwind-merge + lucide to render a `<select>` and a checkbox is bundle and dependency surface bought for little. It also honours the parallel-work rule in `AGENTS.md` ("add a dependency on one branch only, on `main` first"): the buyer build adds none.
+
+**Trade-off:** we forgo Radix's accessibility behaviours for the few controls that would benefit (e.g. a custom listbox). Accepted at prototype scope — the controls used are native and accessible by default. The change point is the first primitive whose correct behaviour is genuinely hard to hand-roll (a combobox, a focus-trapped dialog, a date picker); at that point adopt the library rather than reimplement it.
+
+**Consequence:** the CLAUDE.md rule "do not edit `components/ui/**` after the foundation phase without saying so explicitly" continues to apply — this ADR is that explicit statement for their initial creation.
+
+---
+
+## ADR-18. Policy subqueries against `profiles` use a `security definer` helper, not a widened read grant
+
+**Alternative:** open `profiles` to all authenticated users (a single permissive `select` policy).
+
+**Decision:** keep `profiles` read **scoped** — own row, manager, or a user you share a conversation with — and give `assets_read_published` a `security definer` helper, `public.is_seller_active(uid)`, for its seller-ACTIVE check instead of an inline `select … from profiles` subquery. Applied in migration `20260819130000_fix_read_rls.sql`.
+
+**Why:** Postgres applies a table's RLS to *every* reference to it, including subqueries inside another policy's `USING` expression. `assets_read_published` checked the seller's status with an inline `exists (select 1 from profiles …)`, so that subquery ran under `profiles_read_self` (own-row-only) and returned nothing for other sellers — making **every** published asset invisible to a buyer, and nulling the counterparty handle in `/messages`. This is the same trap `is_active()` already sidesteps with `security definer`; `is_seller_active()` is the same convention, one more time, rather than a new one.
+
+Widening `profiles` to all authenticated users would also have worked and is defensible (the table holds only the non-identifying handle), but it trades a precise grant for a blanket one and quietly exposes every participant's `display_name`/`role` to every other. Scoping the read to an existing relationship (a shared conversation) keeps the confidentiality surface as small as the feature needs — the handle is visible exactly to a counterparty, which is the only place the UI renders it. The anonymous buyer directory reads `buyer_profiles` (gated by `is_listed`), not `profiles`, so it needs no wider grant.
+
+**Trade-off:** a `security definer` function is a small privileged surface that must pin `search_path` (it does) and stay narrow (a single boolean). Accepted — it is strictly less exposure than a table-wide read policy, and it matches the pattern already in the schema.

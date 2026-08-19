@@ -9,9 +9,19 @@
  * conversations inserted only when absent.
  */
 import { config } from "dotenv";
-import { createHash } from "node:crypto";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { DEMO_ACCOUNTS } from "../../lib/demo-accounts";
+import { SEEDED_ACCOUNTS, seededAccountsByRole } from "../../lib/demo-accounts";
+import {
+  ACCEPTED_CONVS,
+  assetId,
+  CONV_DEFS,
+  convId,
+  DECLINED_CONVS,
+  PENDING_CONVS,
+  THREAD_SCRIPT,
+  uuid5,
+  type ConvDef,
+} from "./fixtures";
 
 config({ path: ".env.local" });
 
@@ -29,18 +39,6 @@ if (!PASSWORD) throw new Error("Missing DEMO_ACCOUNT_PASSWORD (set it in .env.lo
 const db: SupabaseClient = createClient(URL, SECRET, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
-
-// Deterministic UUIDv5 so re-runs address the same rows (assets, conversations, messages).
-const UUID_NS = "1b671a64-40d5-491e-99b0-da01ff1f3341";
-function uuid5(name: string): string {
-  const ns = Buffer.from(UUID_NS.replace(/-/g, ""), "hex");
-  const hash = createHash("sha1").update(ns).update(name).digest();
-  const b = Buffer.from(hash.subarray(0, 16));
-  b[6] = (b[6] & 0x0f) | 0x50; // version 5
-  b[8] = (b[8] & 0x3f) | 0x80; // variant
-  const h = b.toString("hex");
-  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20, 32)}`;
-}
 
 const pad = (n: number): string => String(n).padStart(2, "0");
 
@@ -79,6 +77,22 @@ const SELLER_HEADLINES = [
   "Digital wallet with e-money authorisation",
   "Legacy processor, wind-down opportunity",
   "Niche FX brokerage, established book",
+];
+
+// Distinct from the headlines — the detail page shows both, so they must not duplicate.
+const SELLER_DESCRIPTIONS = [
+  "EEA-passported e-money licence with a growing active wallet base and clean regulatory history.",
+  "Recurring processing revenue across a diversified merchant book; low churn and a tenured team.",
+  "Retail deposit franchise with laddered maturities and a comfortable capital position.",
+  "Institutional-grade custody with a transferable licence and audited cold-storage controls.",
+  "Established remittance corridors with licensed partners and predictable settlement flows.",
+  "Proprietary underwriting model with strong repayment performance across cycles.",
+  "BIN-sponsored issuing programme with live card portfolios and processor integrations.",
+  "Certified open-banking connections across major EU banks with a stable API layer.",
+  "Merchant acquiring portfolio with blended take rate and long-standing ISV relationships.",
+  "Authorised e-money wallet with an embedded KYC stack and strong unit economics.",
+  "Mature processing platform suited to a managed wind-down or asset carve-out.",
+  "Established FX brokerage with a loyal client book and disciplined risk controls.",
 ];
 
 const SELLER_COMPANIES = [
@@ -124,56 +138,13 @@ const ASSET_TITLES = [
 ];
 
 // ---------------------------------------------------------------------------------------
-// Account definitions
+// Account definitions — sourced from lib/demo-accounts.ts (single source of truth). The
+// sellers/buyers slices preserve seed order, so the index-based domain arrays still line up.
 // ---------------------------------------------------------------------------------------
 
-type Role = "BUYER" | "SELLER" | "MANAGER";
-type Status = "ACTIVE" | "SUSPENDED";
-
-interface Account {
-  key: string; // stable local key, e.g. "seller01"
-  email: string;
-  role: Role;
-  status: Status;
-  displayName: string;
-}
-
-const sellers: Account[] = Array.from({ length: 12 }, (_, i) => {
-  const n = i + 1;
-  return {
-    key: `seller${pad(n)}`,
-    email: `seller${pad(n)}@example.com`,
-    role: "SELLER",
-    status: n >= 11 ? "SUSPENDED" : "ACTIVE", // 2 suspended (F4)
-    displayName: `Seller #${pad(n)}`,
-  };
-});
-
-const buyers: Account[] = Array.from({ length: 20 }, (_, i) => {
-  const n = i + 1;
-  return {
-    key: `buyer${pad(n)}`,
-    email: `buyer${pad(n)}@example.com`,
-    role: "BUYER",
-    status: n === 20 ? "SUSPENDED" : "ACTIVE", // 1 suspended
-    displayName: `Buyer #${pad(n)}`,
-  };
-});
-
-const manager: Account = {
-  key: "manager01",
-  email: DEMO_ACCOUNTS.MANAGER,
-  role: "MANAGER",
-  status: "ACTIVE",
-  displayName: "Manager #01",
-};
-
-const allAccounts: Account[] = [...sellers, ...buyers, manager];
-
-// Canonical demo accounts must line up with lib/demo-accounts.ts.
-if (sellers[0].email !== DEMO_ACCOUNTS.SELLER || buyers[0].email !== DEMO_ACCOUNTS.BUYER) {
-  throw new Error("Canonical demo emails drifted from lib/demo-accounts.ts");
-}
+const sellers = seededAccountsByRole("SELLER");
+const buyers = seededAccountsByRole("BUYER");
+const allAccounts = SEEDED_ACCOUNTS;
 
 // ---------------------------------------------------------------------------------------
 // Users (idempotent via email lookup)
@@ -226,9 +197,6 @@ async function ensureUsers(): Promise<Map<string, string>> {
 const PUBLISHED_AT = "2026-05-01T09:00:00Z";
 const RESPONDED_AT = "2026-06-10T12:00:00Z";
 
-const assetId = (idx: number): string => uuid5(`asset:${idx}`);
-const convId = (key: string): string => uuid5(`conv:${key}`);
-
 async function main(): Promise<void> {
   const id = await ensureUsers();
   const uid = (key: string): string => {
@@ -263,7 +231,7 @@ async function main(): Promise<void> {
           user_id: uid(s.key),
           headline: SELLER_HEADLINES[i],
           jurisdiction: JURIS[i % JURIS.length],
-          description: `${SELLER_HEADLINES[i]}. Established operation with clean records and a warm handover.`,
+          description: SELLER_DESCRIPTIONS[i],
           verified: i % 3 !== 0, // ~two thirds validated
         })),
         { onConflict: "user_id" },
@@ -292,7 +260,6 @@ async function main(): Promise<void> {
     (
       await db.from("buyer_profiles").upsert(
         buyers.map((b, i) => {
-          const n = i + 1;
           const min = (2 + (i % 6)) * 250_000_00; // €500k .. (cents)
           const max = min + (3 + (i % 5)) * 1_000_000_00;
           return {
@@ -304,7 +271,7 @@ async function main(): Promise<void> {
             deal_types: [DEAL_TYPES[i % DEAL_TYPES.length]],
             ticket_min_cents: min,
             ticket_max_cents: max,
-            is_listed: !(n >= 17 && n <= 19), // buyers 17,18,19 opt out of the directory
+            is_listed: b.isListed ?? true, // directory opt-out defined in lib/demo-accounts.ts
           };
         }),
         { onConflict: "user_id" },
@@ -372,39 +339,12 @@ async function main(): Promise<void> {
   });
   fail("assets", (await db.from("assets").upsert(assetRows, { onConflict: "id" })).error);
 
-  // conversations — existence-guarded so the quota trigger never fires on re-run.
-  interface ConvDef {
-    key: string;
-    buyer: string;
-    seller: string;
-    assetIdx: number | null;
-    initiator: string;
-    status: "ACCEPTED" | "DECLINED" | "PENDING";
-  }
-  const accepted: ConvDef[] = [
-    { key: "c1", buyer: "buyer01", seller: "seller01", assetIdx: 0, initiator: "buyer01", status: "ACCEPTED" },
-    { key: "c2", buyer: "buyer02", seller: "seller02", assetIdx: 1, initiator: "buyer02", status: "ACCEPTED" },
-    { key: "c3", buyer: "buyer03", seller: "seller03", assetIdx: null, initiator: "seller03", status: "ACCEPTED" },
-    { key: "c4", buyer: "buyer04", seller: "seller04", assetIdx: 3, initiator: "buyer04", status: "ACCEPTED" },
-  ];
-  const declined: ConvDef[] = [
-    { key: "c5", buyer: "buyer06", seller: "seller05", assetIdx: 4, initiator: "buyer06", status: "DECLINED" },
-  ];
-  // buyer05 sits at exactly 5 pending outbound (D5 demo). Distinct sellers => unique pairs.
-  const pending: ConvDef[] = [
-    { key: "p1", buyer: "buyer05", seller: "seller06", assetIdx: 5, initiator: "buyer05", status: "PENDING" },
-    { key: "p2", buyer: "buyer05", seller: "seller07", assetIdx: 6, initiator: "buyer05", status: "PENDING" },
-    { key: "p3", buyer: "buyer05", seller: "seller08", assetIdx: 7, initiator: "buyer05", status: "PENDING" },
-    { key: "p4", buyer: "buyer05", seller: "seller09", assetIdx: 8, initiator: "buyer05", status: "PENDING" },
-    { key: "p5", buyer: "buyer05", seller: "seller10", assetIdx: 9, initiator: "buyer05", status: "PENDING" },
-    { key: "p6", buyer: "buyer07", seller: "seller02", assetIdx: null, initiator: "seller02", status: "PENDING" },
-  ];
-
-  const convDefs = [...accepted, ...declined, ...pending];
+  // conversations — existence-guarded so the quota trigger never fires on re-run. Definitions
+  // live in ./fixtures so the reset script can identify seeded rows.
   const { data: presentConv, error: convReadErr } = await db
     .from("conversations")
     .select("id")
-    .in("id", convDefs.map((c) => convId(c.key)));
+    .in("id", CONV_DEFS.map((c) => convId(c.key)));
   fail("conversations read", convReadErr);
   const present = new Set((presentConv ?? []).map((r: { id: string }) => r.id));
 
@@ -420,8 +360,10 @@ async function main(): Promise<void> {
 
   // Non-pending first, then pending in order: keeps every initiator's running PENDING count
   // below 5 at insert time (buyer05's fifth insert sees 4).
-  const missingNonPending = [...accepted, ...declined].filter((c) => !present.has(convId(c.key)));
-  const missingPending = pending.filter((c) => !present.has(convId(c.key)));
+  const missingNonPending = [...ACCEPTED_CONVS, ...DECLINED_CONVS].filter(
+    (c) => !present.has(convId(c.key)),
+  );
+  const missingPending = PENDING_CONVS.filter((c) => !present.has(convId(c.key)));
   if (missingNonPending.length) {
     fail(
       "conversations insert (non-pending)",
@@ -432,44 +374,8 @@ async function main(): Promise<void> {
     fail("conversations insert (pending)", (await db.from("conversations").insert(missingPending.map(convRow))).error);
   }
 
-  // messages across 5 threads (~24). Deterministic ids => upsert is safe.
-  const threadScript: Record<string, [string, string][]> = {
-    c1: [
-      ["buyer01", "Hello — interested in your EMI. Could we discuss the wallet base?"],
-      ["seller01", "Happy to. Active wallets are growing ~4% monthly."],
-      ["buyer01", "Great. What is the current licence scope?"],
-      ["seller01", "Full e-money authorisation, passported across the EEA."],
-      ["buyer01", "Understood. Can you share the last two years of EBITDA?"],
-      ["seller01", "Yes, sending the data pack now that we're connected."],
-    ],
-    c2: [
-      ["buyer02", "Your processor looks like a strong fit for our roll-up."],
-      ["seller02", "Thanks — recurring revenue is ~80% of the top line."],
-      ["buyer02", "Churn?"],
-      ["seller02", "Under 5% annually on the merchant base."],
-      ["buyer02", "Let's set up a management call."],
-      ["seller02", "Works for me. I'll propose a few slots."],
-    ],
-    c3: [
-      ["seller03", "We reached out as your mandate matches our deposit book."],
-      ["buyer03", "It does. What's the funding mix?"],
-      ["seller03", "Mostly retail term deposits, laddered maturities."],
-      ["buyer03", "Capital position?"],
-      ["seller03", "Comfortably above minimum; details in the pack."],
-    ],
-    c4: [
-      ["buyer04", "Interested in the acquiring portfolio — volumes?"],
-      ["seller04", "~€1.2bn processed last year across 3,000 merchants."],
-      ["buyer04", "Take rate?"],
-      ["seller04", "Blended ~45bps."],
-      ["buyer04", "Compelling. Sending a teaser back."],
-      ["seller04", "Appreciated — glad we're connected now."],
-    ],
-    // opening message on a still-pending request (allowed for the initiator before acceptance)
-    p1: [["buyer05", "Hi — we'd like to open a conversation about your wallet business."]],
-  };
-
-  const msgRows = Object.entries(threadScript).flatMap(([convKey, lines]) =>
+  // messages across 5 threads (~24). Script lives in ./fixtures; deterministic ids => safe upsert.
+  const msgRows = Object.entries(THREAD_SCRIPT).flatMap(([convKey, lines]) =>
     lines.map(([senderKey, body], idx) => ({
       id: uuid5(`msg:${convKey}:${idx}`),
       conversation_id: convId(convKey),

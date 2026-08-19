@@ -5,7 +5,7 @@
 These are the source of truth. If a request conflicts with them, say so instead of silently deviating.
 
 ## Stack
-Next.js 16 (App Router) · TypeScript strict · Supabase (`@supabase/ssr`) · Tailwind v4 · shadcn/ui · next-intl · Vitest · Playwright.
+Next.js 16 (App Router) · TypeScript strict · Supabase (`@supabase/ssr`) · Tailwind v4 · in-house UI primitives (`components/ui/`, no component library — ADR-17) · next-intl · Vitest · Playwright.
 Package manager: **npm**. Never introduce a second lockfile.
 Next 16: the request-interception convention is `proxy.ts`, not `middleware.ts`.
 

@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "seed": "tsx supabase/seed/seed.ts"
+    "seed": "tsx supabase/seed/seed.ts",
+    "seed:reset": "tsx supabase/seed/reset.ts && npm run seed"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

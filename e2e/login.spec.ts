@@ -13,3 +13,11 @@ test("signing in as Buyer reveals the active role in the header", async ({ page 
   await page.waitForURL("http://localhost:3000/");
   await expect(page.getByText(/Signed in as/i)).toBeVisible();
 });
+
+test("the account picker signs into a specific seeded account", async ({ page }) => {
+  await page.goto("/login");
+  await page.getByText("Sign in as a specific account").click(); // expand the picker
+  await page.getByRole("button", { name: /buyer05@example\.com/ }).click();
+  await page.waitForURL("http://localhost:3000/");
+  await expect(page.getByText(/Signed in as/i)).toBeVisible();
+});

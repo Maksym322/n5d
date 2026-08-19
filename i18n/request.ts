@@ -13,7 +13,22 @@ export default getRequestConfig(async () => {
   const cookieLocale = store.get("locale")?.value;
   const locale: Locale = cookieLocale === "uk" ? "uk" : "en";
 
-  const common = (await import(`../messages/${locale}/common.json`)).default;
+  const [common, marketplace, messages, profile, seller] = await Promise.all([
+    import(`../messages/${locale}/common.json`),
+    import(`../messages/${locale}/marketplace.json`),
+    import(`../messages/${locale}/messages.json`),
+    import(`../messages/${locale}/profile.json`),
+    import(`../messages/${locale}/seller.json`),
+  ]);
 
-  return { locale, messages: { common } };
+  return {
+    locale,
+    messages: {
+      common: common.default,
+      marketplace: marketplace.default,
+      messages: messages.default,
+      profile: profile.default,
+      seller: seller.default,
+    },
+  };
 });

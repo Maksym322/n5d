@@ -16,10 +16,18 @@
   "login": {
     "title": "Choose a demo account",
     "subtitle": "No password needed — pick a role to explore the prototype.",
-    "note": "Each button signs into a pre-seeded demo account."
+    "note": "Each button signs into a pre-seeded demo account.",
+    "pickerToggle": "Sign in as a specific account",
+    "groups": {
+      "BUYER": "Buyers",
+      "SELLER": "Sellers",
+      "MANAGER": "Manager"
+    }
   },
   "home": {
-    "title": "Foundation ready",
-    "body": "Schema, auth and the shell are in place. Marketplace, buyer directory and admin arrive in later phases."
-  }
+    "title": "Confidential M&A, both ways",
+    "body": "Browse anonymised assets, define your mandate, and reach sellers — identities are revealed only when a request is accepted.",
+    "browse": "Browse assets"
+  },
+  "suspended": "Your account is suspended. You have read-only access — contact the platform manager to restore it."
 }

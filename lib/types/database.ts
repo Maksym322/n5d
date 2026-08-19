@@ -439,8 +439,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      is_active: { Args: never; Returns: boolean }
+      is_active:
+        | { Args: never; Returns: boolean }
+        | { Args: { uid: string }; Returns: boolean }
       is_manager: { Args: never; Returns: boolean }
+      is_seller_active: { Args: { uid: string }; Returns: boolean }
       jwt_role: { Args: never; Returns: string }
     }
     Enums: {

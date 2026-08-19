@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { SiteHeader } from "@/components/marketplace/site-header";
+import { SuspendedBanner } from "@/components/marketplace/suspended-banner";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -23,6 +24,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SiteHeader />
+          <SuspendedBanner />
           <div className="flex-1">{children}</div>
         </NextIntlClientProvider>
       </body>

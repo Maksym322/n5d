@@ -244,6 +244,14 @@ as $$ select exists (
 create or replace function public.is_manager() returns boolean
 language sql stable
 as $$ select public.jwt_role() = 'MANAGER' $$;
+
+-- security definer so the seller-ACTIVE check in assets_read_published is not emptied by
+-- profiles' own RLS (ADR-18). Added in migration 20260819130000_fix_read_rls.sql.
+create or replace function public.is_seller_active(uid uuid) returns boolean
+language sql stable security definer set search_path = public
+as $$ select exists (
+  select 1 from profiles where id = uid and status = 'ACTIVE'
+) $$;
 ```
 
 ---
@@ -254,8 +262,19 @@ Enabled on every table: `alter table X enable row level security;`
 
 ### profiles
 ```sql
-create policy profiles_read_self on profiles for select
-  using (id = auth.uid() or public.is_manager());
+-- Read scoped to self, manager, or a user you share a conversation with — the anonymous
+-- handle (display_name) that /messages renders for a counterparty (ADR-18). Superseded the
+-- own-row-only profiles_read_self in migration 20260819130000_fix_read_rls.sql.
+create policy profiles_read_scoped on profiles for select
+  using (
+    id = auth.uid()
+    or public.is_manager()
+    or exists (
+      select 1 from conversations c
+      where (c.buyer_id = auth.uid() and c.seller_id = profiles.id)
+         or (c.seller_id = auth.uid() and c.buyer_id = profiles.id)
+    )
+  );
 
 create policy profiles_update_self on profiles for update
   using (id = auth.uid() and public.is_active())
@@ -317,11 +336,12 @@ create policy seller_identity_write_own on seller_identities for all
 
 ### assets
 ```sql
+-- The seller-ACTIVE check goes through the security definer is_seller_active() rather than an
+-- inline profiles subquery, so it is not emptied by profiles' RLS (ADR-18). Migration
+-- 20260819130000_fix_read_rls.sql superseded the inline-subquery version below.
 create policy assets_read_published on assets for select
   using (
-    (status = 'PUBLISHED' and exists (
-       select 1 from profiles p where p.id = assets.seller_id and p.status = 'ACTIVE'
-    ))
+    (status = 'PUBLISHED' and public.is_seller_active(assets.seller_id))
     or seller_id = auth.uid()
     or public.is_manager()
   );
@@ -436,9 +456,9 @@ create trigger assets_published_at
 |---|---|---|
 | Sellers | 12 | 2 suspended (F4); all have both profile and identity rows |
 | Buyers | 20 | 1 suspended, 3 with `is_listed = false` |
-| Assets | 35 | 28 PUBLISHED, 4 DRAFT, 2 SUSPENDED, 1 SOLD; ~20 `validated` |
-| Conversations | 8 | 3 PENDING, **4 ACCEPTED**, 1 DECLINED |
-| Messages | ~25 | across 5 threads |
+| Assets | 35 | 28 PUBLISHED, 4 DRAFT, 2 SUSPENDED, 1 SOLD; 20 `validated` |
+| Conversations | 11 | 6 PENDING, **4 ACCEPTED**, 1 DECLINED |
+| Messages | 24 | across 5 threads |
 | Moderation log | 4 | one of each action |
 
 Content is realistic European M&A across the reference's categories — Bank, Fintech, Payment, EMI, Crypto — in DE, PL, NL, ES, UA, CZ, SE, MT, IE, with tickets from €200k to €40M. `price_history` gets six annual points per asset with plausible drift, so no two charts look alike.

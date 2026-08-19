@@ -1,0 +1,26 @@
+{
+  "title": "Your buyer profile",
+  "subtitle": "Define your investment mandate. This is what sellers see — never your identity.",
+  "form": {
+    "mandate": "Investment mandate",
+    "headline": "Headline",
+    "headlinePlaceholder": "e.g. PE fund focused on payment infrastructure in DACH",
+    "investorType": "Investor type",
+    "categories": "Categories of interest",
+    "jurisdictions": "Target jurisdictions",
+    "dealTypes": "Deal types",
+    "ticket": "Ticket size",
+    "ticketMin": "Minimum (€)",
+    "ticketMax": "Maximum (€)",
+    "ticketHint": "Leave blank for open-ended.",
+    "directory": "Directory",
+    "isListed": "List me in the buyer directory",
+    "isListedHint": "When off, sellers can’t find you — but you can still contact them.",
+    "save": "Save mandate",
+    "saving": "Saving…",
+    "saved": "Mandate saved.",
+    "ticketRangeInvalid": "Minimum ticket can’t be greater than the maximum.",
+    "invalid": "Please check the highlighted fields.",
+    "error": "Couldn’t save. Please try again."
+  }
+}

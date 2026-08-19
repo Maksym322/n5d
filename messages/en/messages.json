@@ -1,0 +1,45 @@
+{
+  "title": "Messages",
+  "subtitle": "Your contact requests and conversations.",
+  "empty": {
+    "title": "No conversations yet",
+    "body": "Contact a seller from a listing to start a conversation.",
+    "browse": "Browse assets"
+  },
+  "status": {
+    "PENDING": "Pending",
+    "ACCEPTED": "Accepted",
+    "DECLINED": "Declined"
+  },
+  "list": {
+    "anonymous": "Anonymous counterparty",
+    "aboutAsset": "About Asset {ref}",
+    "generalEnquiry": "General enquiry",
+    "noMessages": "No messages yet"
+  },
+  "thread": {
+    "back": "All messages",
+    "aboutAsset": "About Asset {ref}",
+    "generalEnquiry": "General enquiry",
+    "anonymous": "Anonymous counterparty",
+    "you": "You",
+    "composerPlaceholder": "Write a message…",
+    "send": "Send",
+    "sending": "Sending…",
+    "lockedPendingTitle": "Waiting to be accepted",
+    "lockedPending": "This request is still pending. Once it’s accepted, messaging unlocks and both identities are revealed.",
+    "declinedTitle": "Request declined",
+    "declined": "This request was declined. You can’t send more messages.",
+    "incomingTitle": "Respond to this request",
+    "incomingBody": "Accept to reveal both identities and unlock messaging, or decline to close it.",
+    "notAllowed": "You can’t send that message.",
+    "error": "Couldn’t send. Please try again.",
+    "notFound": "This conversation isn’t available."
+  },
+  "respond": {
+    "accept": "Accept",
+    "decline": "Decline",
+    "notAllowed": "You can’t respond to this request.",
+    "error": "Couldn’t update the request. Please try again."
+  }
+}
