@@ -27,43 +27,63 @@ export async function SiteHeader() {
 
           {user ? (
             <nav className="flex items-center gap-1 text-sm font-medium">
-              {/* Role-aware nav: sellers manage listings and browse the buyer directory; buyers and
-                  managers browse the public catalogue. Messages + profile are shared. */}
-              {role === "SELLER" ? (
+              {/* Role-aware nav: the manager gets the registry + audit log; sellers manage listings
+                  and browse the buyer directory; buyers browse the public catalogue. Messages +
+                  profile are shared by the two transacting roles, not by the manager. */}
+              {role === "MANAGER" ? (
                 <>
                   <Link
-                    href="/seller"
+                    href="/admin/buyers"
                     className="rounded-pill px-3 py-1.5 text-foreground transition hover:bg-background"
                   >
-                    {nav("dashboard")}
+                    {nav("registry")}
                   </Link>
                   <Link
-                    href="/seller/buyers"
+                    href="/admin/log"
                     className="rounded-pill px-3 py-1.5 text-foreground transition hover:bg-background"
                   >
-                    {nav("buyers")}
+                    {nav("auditLog")}
                   </Link>
                 </>
               ) : (
-                <Link
-                  href="/assets"
-                  className="rounded-pill px-3 py-1.5 text-foreground transition hover:bg-background"
-                >
-                  {nav("assets")}
-                </Link>
+                <>
+                  {role === "SELLER" ? (
+                    <>
+                      <Link
+                        href="/seller"
+                        className="rounded-pill px-3 py-1.5 text-foreground transition hover:bg-background"
+                      >
+                        {nav("dashboard")}
+                      </Link>
+                      <Link
+                        href="/seller/buyers"
+                        className="rounded-pill px-3 py-1.5 text-foreground transition hover:bg-background"
+                      >
+                        {nav("buyers")}
+                      </Link>
+                    </>
+                  ) : (
+                    <Link
+                      href="/assets"
+                      className="rounded-pill px-3 py-1.5 text-foreground transition hover:bg-background"
+                    >
+                      {nav("assets")}
+                    </Link>
+                  )}
+                  <Link
+                    href="/messages"
+                    className="rounded-pill px-3 py-1.5 text-foreground transition hover:bg-background"
+                  >
+                    {nav("messages")}
+                  </Link>
+                  <Link
+                    href="/profile"
+                    className="rounded-pill px-3 py-1.5 text-foreground transition hover:bg-background"
+                  >
+                    {nav("profile")}
+                  </Link>
+                </>
               )}
-              <Link
-                href="/messages"
-                className="rounded-pill px-3 py-1.5 text-foreground transition hover:bg-background"
-              >
-                {nav("messages")}
-              </Link>
-              <Link
-                href="/profile"
-                className="rounded-pill px-3 py-1.5 text-foreground transition hover:bg-background"
-              >
-                {nav("profile")}
-              </Link>
             </nav>
           ) : null}
         </div>

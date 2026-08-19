@@ -52,6 +52,25 @@ export const PENDING_CONVS: ConvDef[] = [
 
 export const CONV_DEFS: ConvDef[] = [...ACCEPTED_CONVS, ...DECLINED_CONVS, ...PENDING_CONVS];
 
+// Fixture status/timestamp derivations shared by the seed and the reset. They live here (not in
+// seed.ts) so reset.ts can force every seeded row back to its exact fixture state — a demo
+// recording has to start from a known state, and existence-guarded inserts alone can't undo a
+// status a user changed while clicking around (an accepted thread, a suspended asset).
+export const RESPONDED_AT = "2026-06-10T12:00:00Z";
+
+export function respondedAtFor(status: ConvDef["status"]): string | null {
+  return status === "PENDING" ? null : RESPONDED_AT;
+}
+
+export const ASSET_COUNT = 35;
+
+export type SeedAssetStatus = "PUBLISHED" | "DRAFT" | "SUSPENDED" | "SOLD";
+
+// 28 PUBLISHED, 4 DRAFT, 2 SUSPENDED, 1 SOLD (DATA-MODEL §8), keyed by asset index.
+export function seededAssetStatus(i: number): SeedAssetStatus {
+  return i < 28 ? "PUBLISHED" : i < 32 ? "DRAFT" : i < 34 ? "SUSPENDED" : "SOLD";
+}
+
 export const THREAD_SCRIPT: Record<string, [string, string][]> = {
   c1: [
     ["buyer01", "Hello — interested in your EMI. Could we discuss the wallet base?"],
@@ -84,8 +103,16 @@ export const THREAD_SCRIPT: Record<string, [string, string][]> = {
     ["buyer04", "Compelling. Sending a teaser back."],
     ["seller04", "Appreciated — glad we're connected now."],
   ],
-  // opening message on a still-pending request (allowed for the initiator before acceptance)
+  // Opening message on a still-pending request. The initiator may post exactly one message
+  // before acceptance (RLS msg_insert_accepted), so every PENDING thread carries the opener
+  // its initiator sent — otherwise the recipient's thread list shows "No messages yet" and
+  // the request looks blank. buyer05 initiated p1–p5; seller02 initiated p6.
   p1: [["buyer05", "Hi — we'd like to open a conversation about your wallet business."]],
+  p2: [["buyer05", "Hello — your processor fits our payments roll-up. Could we talk?"]],
+  p3: [["buyer05", "Interested in your deposit book. Open to an intro call?"]],
+  p4: [["buyer05", "Your custody platform matches our mandate — keen to learn more."]],
+  p5: [["buyer05", "We'd like to explore your remittance business. Are you open to it?"]],
+  p6: [["seller02", "We reached out as your mandate looks aligned with our processor."]],
 };
 
 export const SEEDED_CONVERSATION_IDS: string[] = CONV_DEFS.map((c) => convId(c.key));

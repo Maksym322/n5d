@@ -7,8 +7,15 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronRightIcon } from "@/components/ui/icons";
 import { MessageComposer } from "@/components/marketplace/message-composer";
 import { RequestActions } from "@/components/marketplace/request-actions";
+import { ReadOnlyNotice } from "@/components/marketplace/read-only-notice";
 
-export function ConversationThreadView({ thread }: { thread: ConversationThread }) {
+export function ConversationThreadView({
+  thread,
+  suspended = false,
+}: {
+  thread: ConversationThread;
+  suspended?: boolean;
+}) {
   const t = useTranslations("messages");
   const locale = useLocale();
 
@@ -74,7 +81,13 @@ export function ConversationThreadView({ thread }: { thread: ConversationThread 
       </ol>
 
       {thread.status === "ACCEPTED" ? (
-        <MessageComposer conversationId={thread.id} />
+        // F5: a suspended user keeps read access to the thread but cannot post (is_active() blocks
+        // the insert), so the composer is replaced with a read-only note rather than left to fail.
+        suspended ? (
+          <ReadOnlyNotice />
+        ) : (
+          <MessageComposer conversationId={thread.id} />
+        )
       ) : thread.status === "PENDING" && !thread.initiatedByMe ? (
         // I received this request — accept reveals both identities and unlocks the thread; decline
         // frees the sender's quota (ADR-11, F2/F3).
@@ -85,7 +98,7 @@ export function ConversationThreadView({ thread }: { thread: ConversationThread 
             </p>
             <p className="mt-1 text-sm text-muted">{t("thread.incomingBody")}</p>
           </div>
-          <RequestActions conversationId={thread.id} />
+          {suspended ? <ReadOnlyNotice /> : <RequestActions conversationId={thread.id} />}
         </div>
       ) : (
         <div className="rounded-card border border-dashed border-border bg-surface p-4">

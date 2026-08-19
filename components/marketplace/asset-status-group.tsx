@@ -15,9 +15,11 @@ const TONE: Record<AssetStatus, "neutral" | "success" | "danger" | "accent"> = {
 export function AssetStatusGroup({
   status,
   assets,
+  suspended = false,
 }: {
   status: AssetStatus;
   assets: MyAsset[];
+  suspended?: boolean;
 }) {
   const t = useTranslations("seller");
   if (assets.length === 0) return null;
@@ -32,7 +34,7 @@ export function AssetStatusGroup({
       </div>
       <div className="space-y-2">
         {assets.map((asset) => (
-          <SellerAssetRow key={asset.id} asset={asset} />
+          <SellerAssetRow key={asset.id} asset={asset} suspended={suspended} />
         ))}
       </div>
     </section>

@@ -12,14 +12,19 @@ import { Button } from "@/components/ui/button";
 export function AssetStatusButtons({
   assetId,
   status,
+  suspended = false,
 }: {
   assetId: string;
   status: AssetStatus;
+  suspended?: boolean;
 }) {
   const t = useTranslations("seller");
   const router = useRouter();
   const [error, setError] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  // F5: a suspended seller can't change status (is_active() blocks the update), so offer nothing.
+  if (suspended) return null;
 
   function change(next: "DRAFT" | "PUBLISHED" | "SOLD") {
     setError(false);

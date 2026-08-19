@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
-import { requireUser } from "@/lib/db/session";
+import { isSuspended, requireUser } from "@/lib/db/session";
 import { getBuyerById } from "@/lib/db/buyer-directory";
 import { CONTACT_QUOTA, getMyPendingContactCount } from "@/lib/db/conversations";
 import { formatTicketRange } from "@/lib/format";
@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronRightIcon } from "@/components/ui/icons";
 import { AttributeGrid, type Attribute } from "@/components/marketplace/attribute-grid";
 import { ContactBuyerPanel } from "@/components/marketplace/contact-buyer-panel";
+import { ReadOnlyNotice } from "@/components/marketplace/read-only-notice";
 
 // Anonymous buyer detail + seller-initiated contact (F3). Keyed on the profile uuid (not
 // enumerable). getBuyerById returns null for an opted-out (is_listed=false) or suspended buyer — RLS
@@ -24,7 +25,8 @@ export default async function BuyerDetailPage({
   const buyer = await getBuyerById(id);
   if (!buyer) notFound();
 
-  const pendingCount = await getMyPendingContactCount();
+  const suspended = await isSuspended();
+  const pendingCount = suspended ? 0 : await getMyPendingContactCount();
   const t = await getTranslations("seller");
   const tm = await getTranslations("marketplace");
   const locale = await getLocale();
@@ -78,11 +80,15 @@ export default async function BuyerDetailPage({
         </div>
 
         <aside className="space-y-6">
-          <ContactBuyerPanel
-            buyerId={buyer.userId}
-            pendingCount={pendingCount}
-            quota={CONTACT_QUOTA}
-          />
+          {suspended ? (
+            <ReadOnlyNotice />
+          ) : (
+            <ContactBuyerPanel
+              buyerId={buyer.userId}
+              pendingCount={pendingCount}
+              quota={CONTACT_QUOTA}
+            />
+          )}
         </aside>
       </div>
     </main>

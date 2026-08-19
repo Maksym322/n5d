@@ -8,7 +8,13 @@ import { AssetStatusButtons } from "@/components/marketplace/asset-status-button
 
 // Compact dashboard row for one of the seller's own assets (F2). Shows the human ref, title, key
 // facts and the asking price, plus edit + status affordances.
-export function SellerAssetRow({ asset }: { asset: MyAsset }) {
+export function SellerAssetRow({
+  asset,
+  suspended = false,
+}: {
+  asset: MyAsset;
+  suspended?: boolean;
+}) {
   const t = useTranslations("seller");
   const tm = useTranslations("marketplace");
   const locale = useLocale();
@@ -44,7 +50,7 @@ export function SellerAssetRow({ asset }: { asset: MyAsset }) {
         >
           {t("dashboard.edit")}
         </Link>
-        <AssetStatusButtons assetId={asset.id} status={asset.status} />
+        <AssetStatusButtons assetId={asset.id} status={asset.status} suspended={suspended} />
       </div>
     </article>
   );

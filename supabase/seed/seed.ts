@@ -13,11 +13,15 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { SEEDED_ACCOUNTS, seededAccountsByRole } from "../../lib/demo-accounts";
 import {
   ACCEPTED_CONVS,
+  ASSET_COUNT,
   assetId,
   CONV_DEFS,
   convId,
   DECLINED_CONVS,
   PENDING_CONVS,
+  RESPONDED_AT,
+  respondedAtFor,
+  seededAssetStatus,
   THREAD_SCRIPT,
   uuid5,
   type ConvDef,
@@ -195,7 +199,6 @@ async function ensureUsers(): Promise<Map<string, string>> {
 // ---------------------------------------------------------------------------------------
 
 const PUBLISHED_AT = "2026-05-01T09:00:00Z";
-const RESPONDED_AT = "2026-06-10T12:00:00Z";
 
 async function main(): Promise<void> {
   const id = await ensureUsers();
@@ -296,8 +299,8 @@ async function main(): Promise<void> {
   // assets: 28 PUBLISHED, 4 DRAFT, 2 SUSPENDED, 1 SOLD; 20 validated. public_ref is assigned
   // by the sequence default; the stable id is uuid5("asset:<index>"). published_at is set for
   // every non-DRAFT asset (the §7 trigger is UPDATE-only, so a direct insert won't stamp it).
-  const assetStatus = (i: number): "PUBLISHED" | "DRAFT" | "SUSPENDED" | "SOLD" =>
-    i < 28 ? "PUBLISHED" : i < 32 ? "DRAFT" : i < 34 ? "SUSPENDED" : "SOLD";
+  // Status mapping lives in ./fixtures so the reset can force it back.
+  const assetStatus = seededAssetStatus;
 
   // Seller owning each asset: spread across active sellers, with two PUBLISHED assets on the
   // suspended sellers (11,12) so F4 is demonstrable.
@@ -308,7 +311,7 @@ async function main(): Promise<void> {
     return `seller${pad((i % 4) + 1)}`; // 28..34 on active sellers
   };
 
-  const assetRows = Array.from({ length: 35 }, (_, i) => {
+  const assetRows = Array.from({ length: ASSET_COUNT }, (_, i) => {
     const status = assetStatus(i);
     const rand = rng(1000 + i);
     const askingBase = (2 + (i % 30)) * 500_000_00; // cents, €1M .. ~€15.5M
@@ -355,7 +358,7 @@ async function main(): Promise<void> {
     asset_id: c.assetIdx === null ? null : assetId(c.assetIdx),
     initiated_by: uid(c.initiator),
     status: c.status,
-    responded_at: c.status === "PENDING" ? null : RESPONDED_AT,
+    responded_at: respondedAtFor(c.status),
   });
 
   // Non-pending first, then pending in order: keeps every initiator's running PENDING count

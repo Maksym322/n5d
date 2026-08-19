@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
-import { requireUser } from "@/lib/db/session";
+import { isSuspended, requireUser } from "@/lib/db/session";
 import { getAssetByRef } from "@/lib/db/assets";
 import { CONTACT_QUOTA, getMyPendingContactCount } from "@/lib/db/conversations";
 import { formatAssetRef, formatMoney } from "@/lib/format";
@@ -13,6 +13,7 @@ import { HighlightPills } from "@/components/marketplace/highlight-pills";
 import { MarketTrendChart } from "@/components/marketplace/market-trend-chart";
 import { ValidatedBadge } from "@/components/marketplace/validated-badge";
 import { ContactPanel } from "@/components/marketplace/contact-panel";
+import { ReadOnlyNotice } from "@/components/marketplace/read-only-notice";
 
 export default async function AssetDetailPage({
   params,
@@ -26,7 +27,8 @@ export default async function AssetDetailPage({
   if (!asset) notFound();
 
   const isBuyer = user.app_metadata?.role === "BUYER";
-  const pendingCount = isBuyer ? await getMyPendingContactCount() : 0;
+  const suspended = isBuyer ? await isSuspended() : false;
+  const pendingCount = isBuyer && !suspended ? await getMyPendingContactCount() : 0;
   const t = await getTranslations("marketplace");
   const locale = await getLocale();
 
@@ -125,12 +127,16 @@ export default async function AssetDetailPage({
             <MarketTrendChart points={asset.priceHistory} />
           </div>
           {isBuyer ? (
-            <ContactPanel
-              sellerId={asset.sellerId}
-              assetId={asset.id}
-              pendingCount={pendingCount}
-              quota={CONTACT_QUOTA}
-            />
+            suspended ? (
+              <ReadOnlyNotice />
+            ) : (
+              <ContactPanel
+                sellerId={asset.sellerId}
+                assetId={asset.id}
+                pendingCount={pendingCount}
+                quota={CONTACT_QUOTA}
+              />
+            )
           ) : (
             <p className="rounded-card border border-border bg-surface p-5 text-sm text-muted">
               {t("contact.buyersOnly")}

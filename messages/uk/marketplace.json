@@ -4,7 +4,9 @@
     "dashboard": "Панель",
     "buyers": "Покупці",
     "messages": "Повідомлення",
-    "profile": "Профіль"
+    "profile": "Профіль",
+    "registry": "Реєстр",
+    "auditLog": "Журнал"
   },
   "catalogue": {
     "title": "Активи",

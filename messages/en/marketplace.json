@@ -4,7 +4,9 @@
     "dashboard": "Dashboard",
     "buyers": "Buyers",
     "messages": "Messages",
-    "profile": "Profile"
+    "profile": "Profile",
+    "registry": "Registry",
+    "auditLog": "Audit log"
   },
   "catalogue": {
     "title": "Assets",

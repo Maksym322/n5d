@@ -1,0 +1,154 @@
+{
+  "title": "Registry",
+  "subtitle": "Buyers, sellers and assets across the platform — including suspended participants, drafts and identities.",
+  "tabs": {
+    "buyers": "Buyers",
+    "sellers": "Sellers",
+    "assets": "Assets"
+  },
+  "search": {
+    "label": "Search",
+    "buyers": "Search buyers by name or company…",
+    "sellers": "Search sellers by name or company…",
+    "assets": "Search assets by title or #ref…"
+  },
+  "filters": {
+    "status": "Status",
+    "category": "Category",
+    "listed": "Directory",
+    "verified": "Verification",
+    "action": "Action",
+    "target": "Target",
+    "any": "Any",
+    "clear": "Clear filters",
+    "listedYes": "Listed",
+    "listedNo": "Opted out",
+    "verifiedYes": "Verified",
+    "verifiedNo": "Unverified",
+    "targetUser": "Participant",
+    "targetAsset": "Asset"
+  },
+  "status": {
+    "ACTIVE": "Active",
+    "SUSPENDED": "Suspended",
+    "DRAFT": "Draft",
+    "PUBLISHED": "Published",
+    "SOLD": "Sold"
+  },
+  "results": "{count, plural, =0 {No results} one {# result} other {# results}}",
+  "table": {
+    "participant": "Participant",
+    "company": "Company",
+    "status": "Status",
+    "listings": "Published",
+    "mandate": "Mandate",
+    "directory": "Directory",
+    "asset": "Asset",
+    "seller": "Seller",
+    "price": "Asking price",
+    "anonymous": "—",
+    "publishedCount": "{count, plural, =0 {none} one {# live} other {# live}}"
+  },
+  "empty": {
+    "buyers": "No buyers match these filters.",
+    "sellers": "No sellers match these filters.",
+    "assets": "No assets match these filters.",
+    "log": "No moderation actions match these filters.",
+    "history": "No moderation history for this target yet.",
+    "widen": "Try clearing a filter to widen the results."
+  },
+  "detail": {
+    "backBuyers": "Back to buyers",
+    "backSellers": "Back to sellers",
+    "backAssets": "Back to assets",
+    "identity": "Identity",
+    "mandate": "Mandate",
+    "tradingProfile": "Trading profile",
+    "listings": "Listings",
+    "history": "Moderation history",
+    "company": "Company",
+    "contact": "Contact person",
+    "website": "Website",
+    "registration": "Registration no.",
+    "investorType": "Investor type",
+    "ticket": "Ticket range",
+    "categories": "Categories",
+    "jurisdictions": "Jurisdictions",
+    "dealTypes": "Deal types",
+    "jurisdiction": "Jurisdiction",
+    "directory": "Directory",
+    "listed": "Listed in the directory",
+    "optedOut": "Opted out of the directory",
+    "verified": "Verified seller",
+    "unverified": "Not verified",
+    "notFound": "Not found.",
+    "viewSeller": "View seller",
+    "none": "None"
+  },
+  "consequence": {
+    "sellerActive": "{count, plural, =0 {No published listings — nothing in the public catalogue.} one {# published listing — public in the catalogue now.} other {# published listings — public in the catalogue now.}}",
+    "sellerSuspended": "{count, plural, =0 {No listings in the catalogue.} one {# listing hidden from the catalogue.} other {# listings hidden from the catalogue.}}",
+    "buyerActive": "Active — listed in the buyer directory (if not opted out) and able to send contact requests.",
+    "buyerSuspended": "Suspended — removed from the buyer directory and read-only.",
+    "assetPublished": "Public in the catalogue now.",
+    "assetSuspended": "Removed from the public catalogue.",
+    "assetDraft": "Draft — not yet in the public catalogue.",
+    "assetSold": "Sold — not in the public catalogue."
+  },
+  "moderate": {
+    "reasonLabel": "Reason",
+    "reasonHint": "At least 10 characters. Recorded in the moderation log.",
+    "reasonPlaceholder": "Why is this action being taken?",
+    "counter": "{count} / 10",
+    "cancel": "Cancel",
+    "submitting": "Working…",
+    "trigger": {
+      "SUSPEND": "Suspend participant",
+      "REACTIVATE": "Reactivate participant",
+      "SUSPEND_ASSET": "Suspend listing",
+      "REPUBLISH_ASSET": "Republish listing"
+    },
+    "confirm": {
+      "SUSPEND": "Suspend",
+      "REACTIVATE": "Reactivate",
+      "SUSPEND_ASSET": "Suspend listing",
+      "REPUBLISH_ASSET": "Republish listing"
+    },
+    "note": {
+      "SUSPEND": "{count, plural, =0 {Suspends the account and blocks all of its writes (read-only).} one {Suspends the account, removes its # published listing from the public catalogue, and blocks all writes.} other {Suspends the account, removes its # published listings from the public catalogue, and blocks all writes.}}",
+      "REACTIVATE": "Restores the account: listings return to the catalogue and write access is restored.",
+      "SUSPEND_ASSET": "Removes this listing from the public catalogue.",
+      "REPUBLISH_ASSET": "Returns this listing to the public catalogue."
+    },
+    "success": {
+      "SUSPEND": "Participant suspended.",
+      "REACTIVATE": "Participant reactivated.",
+      "SUSPEND_ASSET": "Listing suspended.",
+      "REPUBLISH_ASSET": "Listing republished."
+    },
+    "errors": {
+      "REASON_TOO_SHORT": "The reason must be at least 10 characters.",
+      "NOT_MANAGER": "Only a platform manager can do this.",
+      "NOT_ALLOWED": "This action can’t be applied to this target.",
+      "INVALID": "Please check the form and try again.",
+      "UNKNOWN": "Something went wrong. Please try again."
+    }
+  },
+  "log": {
+    "title": "Moderation log",
+    "subtitle": "Every suspension and reactivation — actor, target, reason and time.",
+    "actor": "Actor",
+    "action": "Action",
+    "target": "Target",
+    "reason": "Reason",
+    "when": "When",
+    "results": "{count, plural, =0 {No entries} one {# entry} other {# entries}}",
+    "unknownTarget": "Unknown"
+  },
+  "actions": {
+    "SUSPEND": "Suspended participant",
+    "REACTIVATE": "Reactivated participant",
+    "SUSPEND_ASSET": "Suspended listing",
+    "REPUBLISH_ASSET": "Republished listing"
+  }
+}

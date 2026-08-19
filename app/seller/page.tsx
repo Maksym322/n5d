@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { requireUser } from "@/lib/db/session";
+import { isSuspended, requireUser } from "@/lib/db/session";
 import { listMyAssets, type AssetStatus } from "@/lib/db/seller-assets";
 import { listIncomingPendingRequests } from "@/lib/db/conversations";
 import { buttonClasses } from "@/components/ui/button";
 import { AssetStatusGroup } from "@/components/marketplace/asset-status-group";
 import { IncomingRequestCard } from "@/components/marketplace/incoming-request-card";
 import { EmptyState } from "@/components/marketplace/empty-state";
+import { ReadOnlyNotice } from "@/components/marketplace/read-only-notice";
 
 // Seller dashboard (F2): my assets grouped by status, incoming requests needing a response, and
 // quick counts. Groups are shown in the order a seller cares about most.
@@ -14,9 +15,10 @@ const GROUP_ORDER: AssetStatus[] = ["PUBLISHED", "DRAFT", "SUSPENDED", "SOLD"];
 
 export default async function SellerDashboardPage() {
   await requireUser();
-  const [assets, incoming] = await Promise.all([
+  const [assets, incoming, suspended] = await Promise.all([
     listMyAssets(),
     listIncomingPendingRequests(),
+    isSuspended(),
   ]);
   const t = await getTranslations("seller");
 
@@ -38,10 +40,14 @@ export default async function SellerDashboardPage() {
           <h1 className="text-2xl font-bold text-foreground">{t("dashboard.title")}</h1>
           <p className="text-sm text-muted">{t("dashboard.subtitle")}</p>
         </div>
-        <Link href="/seller/assets/new" className={buttonClasses({ size: "sm" })}>
-          {t("dashboard.newAsset")}
-        </Link>
+        {suspended ? null : (
+          <Link href="/seller/assets/new" className={buttonClasses({ size: "sm" })}>
+            {t("dashboard.newAsset")}
+          </Link>
+        )}
       </header>
+
+      {suspended ? <ReadOnlyNotice /> : null}
 
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {stats.map((s) => (
@@ -63,7 +69,7 @@ export default async function SellerDashboardPage() {
         ) : (
           <div className="space-y-3">
             {incoming.map((request) => (
-              <IncomingRequestCard key={request.id} request={request} />
+              <IncomingRequestCard key={request.id} request={request} suspended={suspended} />
             ))}
           </div>
         )}
@@ -78,18 +84,25 @@ export default async function SellerDashboardPage() {
             title={t("dashboard.noAssetsTitle")}
             description={t("dashboard.noAssetsBody")}
             action={
-              <Link
-                href="/seller/assets/new"
-                className={buttonClasses({ variant: "outline", size: "sm" })}
-              >
-                {t("dashboard.newAsset")}
-              </Link>
+              suspended ? undefined : (
+                <Link
+                  href="/seller/assets/new"
+                  className={buttonClasses({ variant: "outline", size: "sm" })}
+                >
+                  {t("dashboard.newAsset")}
+                </Link>
+              )
             }
           />
         ) : (
           <div className="space-y-6">
             {GROUP_ORDER.map((status) => (
-              <AssetStatusGroup key={status} status={status} assets={byStatus(status)} />
+              <AssetStatusGroup
+                key={status}
+                status={status}
+                assets={byStatus(status)}
+                suspended={suspended}
+              />
             ))}
           </div>
         )}

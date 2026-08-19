@@ -4,11 +4,18 @@ import type { ConversationSummary } from "@/lib/db/conversations";
 import { formatDate } from "@/lib/format";
 import { buttonClasses } from "@/components/ui/button";
 import { RequestActions } from "@/components/marketplace/request-actions";
+import { ReadOnlyNotice } from "@/components/marketplace/read-only-notice";
 
 // An incoming PENDING request on the seller dashboard (F2/F3). The counterparty stays anonymous
 // until acceptance (company is null by RLS). Accept/decline is available inline; "Open" links to the
 // full thread. Symmetric — the same shape serves a buyer who received a seller-initiated request.
-export function IncomingRequestCard({ request }: { request: ConversationSummary }) {
+export function IncomingRequestCard({
+  request,
+  suspended = false,
+}: {
+  request: ConversationSummary;
+  suspended?: boolean;
+}) {
   const t = useTranslations("seller");
   const tmsg = useTranslations("messages");
   const locale = useLocale();
@@ -41,7 +48,7 @@ export function IncomingRequestCard({ request }: { request: ConversationSummary 
         </p>
       ) : null}
 
-      <RequestActions conversationId={request.id} />
+      {suspended ? <ReadOnlyNotice /> : <RequestActions conversationId={request.id} />}
     </article>
   );
 }

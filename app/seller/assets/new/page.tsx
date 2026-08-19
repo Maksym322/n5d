@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { requireUser } from "@/lib/db/session";
+import { isSuspended, requireUser } from "@/lib/db/session";
 import { AssetForm } from "@/components/marketplace/asset-form";
+import { ReadOnlyNotice } from "@/components/marketplace/read-only-notice";
 import { ChevronRightIcon } from "@/components/ui/icons";
 
 export default async function NewAssetPage() {
   await requireUser();
+  const suspended = await isSuspended();
   const t = await getTranslations("seller");
   const currentYear = new Date().getFullYear();
 
@@ -22,7 +24,7 @@ export default async function NewAssetPage() {
         <h1 className="text-2xl font-bold text-foreground">{t("assetForm.newTitle")}</h1>
         <p className="text-sm text-muted">{t("assetForm.newSubtitle")}</p>
       </header>
-      <AssetForm initial={null} currentYear={currentYear} />
+      {suspended ? <ReadOnlyNotice /> : <AssetForm initial={null} currentYear={currentYear} />}
     </main>
   );
 }

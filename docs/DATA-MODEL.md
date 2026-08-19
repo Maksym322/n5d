@@ -458,7 +458,7 @@ create trigger assets_published_at
 | Buyers | 20 | 1 suspended, 3 with `is_listed = false` |
 | Assets | 35 | 28 PUBLISHED, 4 DRAFT, 2 SUSPENDED, 1 SOLD; 20 `validated` |
 | Conversations | 11 | 6 PENDING, **4 ACCEPTED**, 1 DECLINED |
-| Messages | 24 | across 5 threads |
+| Messages | 29 | across 10 threads — every PENDING thread carries its initiator's one opening message |
 | Moderation log | 4 | one of each action |
 
 Content is realistic European M&A across the reference's categories — Bank, Fintech, Payment, EMI, Crypto — in DE, PL, NL, ES, UA, CZ, SE, MT, IE, with tickets from €200k to €40M. `price_history` gets six annual points per asset with plausible drift, so no two charts look alike.

@@ -13,12 +13,13 @@ export default getRequestConfig(async () => {
   const cookieLocale = store.get("locale")?.value;
   const locale: Locale = cookieLocale === "uk" ? "uk" : "en";
 
-  const [common, marketplace, messages, profile, seller] = await Promise.all([
+  const [common, marketplace, messages, profile, seller, admin] = await Promise.all([
     import(`../messages/${locale}/common.json`),
     import(`../messages/${locale}/marketplace.json`),
     import(`../messages/${locale}/messages.json`),
     import(`../messages/${locale}/profile.json`),
     import(`../messages/${locale}/seller.json`),
+    import(`../messages/${locale}/admin.json`),
   ]);
 
   return {
@@ -29,6 +30,7 @@ export default getRequestConfig(async () => {
       messages: messages.default,
       profile: profile.default,
       seller: seller.default,
+      admin: admin.default,
     },
   };
 });

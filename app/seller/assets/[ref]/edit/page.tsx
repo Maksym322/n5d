@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { requireUser } from "@/lib/db/session";
+import { isSuspended, requireUser } from "@/lib/db/session";
 import { getMyAssetByRef } from "@/lib/db/seller-assets";
 import { formatAssetRef } from "@/lib/format";
 import { AssetForm } from "@/components/marketplace/asset-form";
+import { ReadOnlyNotice } from "@/components/marketplace/read-only-notice";
 import { ChevronRightIcon } from "@/components/ui/icons";
 
 export default async function EditAssetPage({
@@ -19,6 +20,7 @@ export default async function EditAssetPage({
   const asset = Number.isInteger(refNum) ? await getMyAssetByRef(refNum) : null;
   if (!asset) notFound();
 
+  const suspended = await isSuspended();
   const t = await getTranslations("seller");
   const currentYear = new Date().getFullYear();
 
@@ -37,7 +39,7 @@ export default async function EditAssetPage({
         </h1>
         <p className="text-sm text-muted">{t("assetForm.editSubtitle")}</p>
       </header>
-      <AssetForm initial={asset} currentYear={currentYear} />
+      {suspended ? <ReadOnlyNotice /> : <AssetForm initial={asset} currentYear={currentYear} />}
     </main>
   );
 }

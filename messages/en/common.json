@@ -29,5 +29,6 @@
     "body": "Browse anonymised assets, define your mandate, and reach sellers — identities are revealed only when a request is accepted.",
     "browse": "Browse assets"
   },
-  "suspended": "Your account is suspended. You have read-only access — contact the platform manager to restore it."
+  "suspended": "Your account is suspended. You have read-only access — contact the platform manager to restore it.",
+  "readOnlyAction": "This action is unavailable while your account is suspended."
 }
