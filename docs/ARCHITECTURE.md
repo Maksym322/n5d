@@ -65,22 +65,30 @@ Stack: Next.js 15 (App Router) · TypeScript strict · Supabase (Postgres + Auth
 
 ## ADR-6. AI features degrade deterministically
 
-**Alternative:** model calls on the critical path, feature unavailable without a key.
+Decision (revised): a single hosted Supabase project serves both development and production. Migrations applied via supabase db push, seed run manually.
 
-**Decision:** match score is computed deterministically from mandate overlap; the model contributes only a rationale sentence, cached in the database. Natural-language search falls back to plain text search when no key is configured.
-
-**Why:** a reviewer without an API key must still see every flow work. It also keeps the AI contribution honest — the scoring logic is inspectable and unit-testable rather than an opaque call.
-
+Trade-off: no environment separation and no fast db reset loop. Accepted deliberately — Docker setup cost outweighed the benefit at this scope. At any real scale this becomes two projects, with local development on a containerised instance.
 ---
 
 ## ADR-7. Deployment: Vercel + Supabase cloud
 
-**Alternative:** self-hosted Supabase, or Docker Compose on a VPS.
+**Alternative A:** self-hosted Supabase, or Docker Compose on a VPS.
+**Alternative B:** local containerised Supabase for development, a separate
+hosted project for production.
 
-**Decision:** Vercel for the app, a dedicated Supabase cloud project for production. Migrations applied via the Supabase CLI; seed run once manually after first deploy. Local development runs `supabase start`, so schema drift is detectable.
+**Decision:** Vercel for the app; a single hosted Supabase project serving
+both development and production. Migrations applied via `supabase db push`,
+types generated with `--linked`, seed run manually.
 
-**Why:** shortest path to the public URL the brief asks for, with genuine environment separation rather than a simulated one.
+**Why:** shortest path to the public URL the brief asks for. Alternative B
+is the correct long-term shape and was the original plan, but it requires
+Docker Desktop and WSL2 on the development machine — setup cost that does
+not repay itself inside a 24-hour budget.
 
+**Trade-off:** no environment separation, and no fast `db reset` loop once
+real data exists. Accepted deliberately. At any real scale this becomes two
+projects, with local development on a containerised instance and migrations
+promoted between them.
 ---
 
 ## ADR-8. i18n: next-intl, EN + UK, cookie-based locale

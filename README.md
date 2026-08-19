@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# N5Deal Marketplace — Prototype
 
-## Getting Started
+Confidential M&A marketplace connecting Sellers and Buyers under a Platform Manager, where
+**confidentiality runs in both directions** (neither side is identified until a contact
+request is accepted). See `docs/PRD.md`, `docs/ARCHITECTURE.md`, `docs/DATA-MODEL.md`,
+`docs/design-audit.md` for the source of truth.
 
-First, run the development server:
+This repository currently contains the **foundation**: schema + RLS, an idempotent demo
+seed, `@supabase/ssr` auth, a passwordless role-switcher login, the design-token shell,
+EN/UK i18n, and the test harness. Marketplace, buyer directory and admin pages come later.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Stack
+
+Next.js (App Router) · TypeScript strict · Supabase (`@supabase/ssr`) · Tailwind v4 ·
+next-intl · Vitest · Playwright. Package manager: **npm**.
+
+## Environment
+
+Two env files (both gitignored — never commit secrets):
+
+`.env.local` — app runtime:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_...
+SUPABASE_SERVICE_ROLE_KEY=sb_secret_...
+DEMO_ACCOUNT_PASSWORD=<shared password for all demo accounts>
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **`DEMO_ACCOUNT_PASSWORD` is required.** All seeded demo accounts share it, and the
+  passwordless `/login` role switcher signs in with it. The seed fails loudly if it is
+  unset. A reviewer running locally must set this in their own `.env.local`; the value for
+  the deployed build is supplied separately (out of band).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`.env.cli.local` — Supabase CLI only (kept out of the app env deliberately):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+SUPABASE_ACCESS_TOKEN=sbp_...        # https://supabase.com/dashboard/account/tokens
+SUPABASE_DB_PASSWORD=<db password>   # Project Settings → Database
+```
 
-## Learn More
+## Setup
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm install
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Apply schema to the hosted project (reads .env.cli.local)
+npx supabase link --project-ref <project-ref>
+npx supabase db push
+npx supabase gen types typescript --linked > lib/types/database.ts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Seed demo data (reads .env.local; safe to run repeatedly)
+npm run seed
 
-## Deploy on Vercel
+npm run dev            # http://localhost:3000
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Demo accounts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`/login` offers three buttons — Buyer / Seller / Manager — that sign into pre-seeded
+accounts (`buyer01@example.com`, `seller01@example.com`, `manager01@example.com`), all using
+`DEMO_ACCOUNT_PASSWORD`. The seed also creates 12 sellers, 20 buyers, 35 assets, 11
+conversations (4 accepted, one initiator sitting at exactly 5 pending), messages and a
+moderation log.
+
+## Scripts
+
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Dev server |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint |
+| `npm test` | Vitest unit tests |
+| `npm run test:e2e` | Playwright (`npx playwright install chromium` first) |
+| `npm run seed` | Idempotent demo seed |
+
+Before reporting a task complete: `npm run typecheck && npm run lint && npm test`.
+
+## Migrations
+
+Append-only in `supabase/migrations/`. Never edit an applied migration. Regenerate types
+after any schema change (`gen types --linked`). Policies and triggers are written to be
+re-runnable (`drop ... if exists` before each `create`).

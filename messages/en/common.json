@@ -1,0 +1,25 @@
+{
+  "appName": "N5Deal",
+  "tagline": "Confidential M&A marketplace",
+  "roles": {
+    "BUYER": "Buyer",
+    "SELLER": "Seller",
+    "MANAGER": "Manager"
+  },
+  "header": {
+    "signedInAs": "Signed in as {role}",
+    "notSignedIn": "Not signed in",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "language": "Language"
+  },
+  "login": {
+    "title": "Choose a demo account",
+    "subtitle": "No password needed — pick a role to explore the prototype.",
+    "note": "Each button signs into a pre-seeded demo account."
+  },
+  "home": {
+    "title": "Foundation ready",
+    "body": "Schema, auth and the shell are in place. Marketplace, buyer directory and admin arrive in later phases."
+  }
+}

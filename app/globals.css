@@ -1,26 +1,28 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Design tokens from docs/design-audit.md §H. Do not edit this @theme block after the
+   foundation phase without saying so explicitly (CLAUDE.md). */
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-background: #f7f9fb; /* page background */
+  --color-surface: #ffffff; /* cards */
+  --color-foreground: #011230; /* primary text */
+  --color-muted: #374151; /* secondary text */
+  --color-accent: #383bfe; /* price + primary buttons */
+  --color-accent-foreground: #ffffff;
+  --color-success: #059669; /* Validated badge */
+  --color-danger: #e05656; /* Not active / suspended */
+  --color-border: #e5e7eb; /* hairline dividers */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --radius-thumb: 12px; /* thumbnails */
+  --radius-card: 16px; /* cards */
+  --radius-pill: 100px; /* pills, primary buttons */
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
 }
