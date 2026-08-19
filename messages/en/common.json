@@ -22,6 +22,26 @@
       "BUYER": "Buyers",
       "SELLER": "Sellers",
       "MANAGER": "Manager"
+    },
+    "notes": {
+      "acceptedRevealed": "Has an accepted thread — counterparty identity revealed",
+      "sellerSuspended": "Suspended — listings hidden from the catalogue (F4)",
+      "sellerAcceptedPlusIncoming": "Accepted thread + an incoming request to accept or decline",
+      "sellerAcceptedPlusIncomingBuyer01": "Accepted thread + an incoming request from buyer01",
+      "sellerDeclined": "Declined an incoming request",
+      "sellerIncomingTwo": "Incoming requests from buyer05 and buyer01",
+      "sellerPendingFromBuyer05": "Has a pending request from buyer05",
+      "sellerActive": "Active seller",
+      "buyerSuspended": "Suspended — read-only access (F5)",
+      "buyerOptOut": "Directory opt-out (is_listed = false)",
+      "buyerAtQuota": "At the 5-request quota limit (D5)",
+      "buyerAcceptedPlusPending": "Accepted + 2 pending threads — anonymous and revealed side by side",
+      "buyerDeclined": "Has a declined request",
+      "buyerPendingFromSeller": "Has a pending request from a seller",
+      "buyerSentPending": "Sent a pending request to seller01",
+      "buyerReactivated": "Reactivated in the moderation log",
+      "buyerActive": "Active buyer",
+      "managerDefault": "Platform manager — moderation and registry"
     }
   },
   "home": {

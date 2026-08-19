@@ -88,7 +88,7 @@ export function MarketTrendChart({ points }: { points: PricePoint[] }) {
       ) : (
         <div
           className="flex items-center justify-center rounded-thumb border border-dashed border-border text-xs text-muted"
-          style={{ width, height }}
+          style={{ width: "100%", height }}
         >
           {t("chart.empty")}
         </div>

@@ -14,8 +14,10 @@
     "results": "{count, plural, =0 {No assets} one {# asset} other {# assets}}"
   },
   "search": {
-    "placeholder": "Find the perfect asset…",
-    "label": "Search assets"
+    "placeholder": "Describe what you're looking for…",
+    "label": "Search assets",
+    "submit": "Search",
+    "searching": "Searching…"
   },
   "categories": {
     "all": "All",
@@ -31,6 +33,18 @@
     "any": "Any",
     "apply": "Apply",
     "clear": "Clear all"
+  },
+  "chips": {
+    "heading": "Applied filters",
+    "remove": "Remove filter: {label}",
+    "query": "“{value}”",
+    "priceRange": "{min} – {max}",
+    "priceMin": "From {value}",
+    "priceMax": "Up to {value}"
+  },
+  "ticket": {
+    "upTo": "Up to {value}",
+    "any": "Any"
   },
   "sort": {
     "label": "Sort",

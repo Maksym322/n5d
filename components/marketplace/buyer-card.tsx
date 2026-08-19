@@ -23,7 +23,13 @@ export function BuyerCard({ buyer }: { buyer: BuyerCardData }) {
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone="accent">{tm(`enums.investorType.${buyer.investorType}`)}</Badge>
           <span className="text-sm font-semibold text-accent">
-            {formatTicketRange(buyer.ticketMinCents, buyer.ticketMaxCents, "EUR", locale)}
+            {formatTicketRange(
+              buyer.ticketMinCents,
+              buyer.ticketMaxCents,
+              { upTo: (value) => tm("ticket.upTo", { value }), any: tm("ticket.any") },
+              "EUR",
+              locale,
+            )}
           </span>
         </div>
 
@@ -58,7 +64,7 @@ export function BuyerCard({ buyer }: { buyer: BuyerCardData }) {
                     key={j}
                     className="rounded-pill bg-background px-2 py-0.5 text-xs font-medium text-foreground"
                   >
-                    {jurisdictionName(j)}
+                    {jurisdictionName(j, locale)}
                   </span>
                 ))
               ) : (

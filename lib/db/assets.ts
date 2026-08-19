@@ -56,7 +56,7 @@ export type AssetDetail = AssetListItem & {
     headline: string;
     jurisdiction: string;
     description: string | null;
-    verified: boolean; // drives the seller-level "Validated" badge
+    verified: boolean; // KYC stub on seller_profiles; shown in the manager registry, not as a listing badge
   } | null;
 };
 

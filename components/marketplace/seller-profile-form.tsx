@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { SellerProfileFull } from "@/lib/db/seller";
 import { SEEDED_JURISDICTIONS, jurisdictionName } from "@/lib/jurisdictions";
 import { updateMySellerProfile } from "@/actions/seller";
@@ -16,6 +16,7 @@ import { CheckIcon } from "@/components/ui/icons";
 // when a contact request is accepted (ADR-10/11).
 export function SellerProfileForm({ initial }: { initial: SellerProfileFull }) {
   const t = useTranslations("seller");
+  const locale = useLocale();
   const [isPending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -86,7 +87,7 @@ export function SellerProfileForm({ initial }: { initial: SellerProfileFull }) {
           >
             {SEEDED_JURISDICTIONS.map((code) => (
               <option key={code} value={code}>
-                {jurisdictionName(code)}
+                {jurisdictionName(code, locale)}
               </option>
             ))}
           </Select>

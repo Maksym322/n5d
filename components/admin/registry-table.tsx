@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { formatMoneyCompact, formatTicketRange } from "@/lib/format";
 import type { AdminAssetRow, AdminBuyerRow, AdminSellerRow } from "@/lib/db/admin";
 import { AccountStatusBadge, AssetStatusBadge } from "@/components/admin/status-badge";
@@ -14,6 +14,7 @@ const CARD =
 export function BuyerRow({ buyer }: { buyer: AdminBuyerRow }) {
   const t = useTranslations("admin");
   const tm = useTranslations("marketplace");
+  const locale = useLocale();
   return (
     <Link href={`/admin/buyers/${buyer.userId}`} className={CARD}>
       <div className="flex items-start justify-between gap-4">
@@ -30,7 +31,13 @@ export function BuyerRow({ buyer }: { buyer: AdminBuyerRow }) {
           <p className="text-xs text-muted">
             {buyer.investorType ? tm(`enums.investorType.${buyer.investorType}`) : t("detail.none")}
             {" · "}
-            {formatTicketRange(buyer.ticketMinCents, buyer.ticketMaxCents)}
+            {formatTicketRange(
+              buyer.ticketMinCents,
+              buyer.ticketMaxCents,
+              { upTo: (value) => tm("ticket.upTo", { value }), any: tm("ticket.any") },
+              "EUR",
+              locale,
+            )}
           </p>
         </div>
         <div className="flex flex-col items-end gap-1.5">

@@ -1,5 +1,5 @@
-import { useTranslations } from "next-intl";
-import { formatDate } from "@/lib/format";
+import { useLocale, useTranslations } from "next-intl";
+import { formatAssetRef, formatDate } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import type { ModLogEntry, ModerationActionType } from "@/lib/db/admin";
 
@@ -15,6 +15,8 @@ const ACTION_TONE: Record<ModerationActionType, "danger" | "success"> = {
 
 export function LogTable({ entries }: { entries: ModLogEntry[] }) {
   const t = useTranslations("admin");
+  const tm = useTranslations("marketplace");
+  const locale = useLocale();
   return (
     <div className="space-y-2">
       {entries.map((e) => (
@@ -25,9 +27,13 @@ export function LogTable({ entries }: { entries: ModLogEntry[] }) {
                 {e.actorName ?? t("log.unknownTarget")}
               </span>
               <Badge tone={ACTION_TONE[e.action]}>{t(`actions.${e.action}`)}</Badge>
-              <span className="text-muted">{e.targetLabel ?? t("log.unknownTarget")}</span>
+              <span className="text-muted">
+                {e.targetRef !== null
+                  ? tm("listing.ref", { ref: formatAssetRef(e.targetRef) })
+                  : e.targetLabel ?? t("log.unknownTarget")}
+              </span>
             </div>
-            <span className="text-xs text-muted">{formatDate(e.createdAt)}</span>
+            <span className="text-xs text-muted">{formatDate(e.createdAt, locale)}</span>
           </div>
           <p className="text-sm text-muted">{e.reason}</p>
         </div>

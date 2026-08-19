@@ -116,7 +116,11 @@ export type ModLogEntry = {
   actorName: string | null;
   targetType: ModerationTargetType;
   targetId: string;
-  targetLabel: string | null; // display_name for USER, "Asset #<ref>" for ASSET
+  targetLabel: string | null; // display_name for USER; always null for ASSET
+  // public_ref for ASSET. Deliberately a number rather than a rendered "Asset #113": the word
+  // is a translated string and belongs in messages/ (marketplace.listing.ref), not in a query
+  // layer that has no locale. LogTable assembles it the same way every other surface does.
+  targetRef: number | null;
   action: ModerationActionType;
   reason: string;
   createdAt: string;
@@ -460,12 +464,8 @@ export async function listModerationLog(
     actorName: actorName.get(r.actor_id) ?? null,
     targetType: r.target_type as ModerationTargetType,
     targetId: r.target_id,
-    targetLabel:
-      r.target_type === "ASSET"
-        ? assetRef.has(r.target_id)
-          ? `Asset #${assetRef.get(r.target_id)}`
-          : null
-        : userName.get(r.target_id) ?? null,
+    targetLabel: r.target_type === "ASSET" ? null : userName.get(r.target_id) ?? null,
+    targetRef: r.target_type === "ASSET" ? assetRef.get(r.target_id) ?? null : null,
     action: r.action,
     reason: r.reason,
     createdAt: r.created_at,

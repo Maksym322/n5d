@@ -22,6 +22,26 @@
       "BUYER": "Покупці",
       "SELLER": "Продавці",
       "MANAGER": "Менеджер"
+    },
+    "notes": {
+      "acceptedRevealed": "Має прийняту розмову — особу контрагента розкрито",
+      "sellerSuspended": "Призупинено — оголошення приховані з каталогу (F4)",
+      "sellerAcceptedPlusIncoming": "Прийнята розмова + вхідний запит, який можна прийняти або відхилити",
+      "sellerAcceptedPlusIncomingBuyer01": "Прийнята розмова + вхідний запит від buyer01",
+      "sellerDeclined": "Відхилив вхідний запит",
+      "sellerIncomingTwo": "Вхідні запити від buyer05 і buyer01",
+      "sellerPendingFromBuyer05": "Має запит в очікуванні від buyer05",
+      "sellerActive": "Активний продавець",
+      "buyerSuspended": "Призупинено — доступ лише для читання (F5)",
+      "buyerOptOut": "Не показується в каталозі (is_listed = false)",
+      "buyerAtQuota": "Досяг ліміту з 5 запитів (D5)",
+      "buyerAcceptedPlusPending": "Прийнята розмова + 2 в очікуванні — анонімно та розкрито поруч",
+      "buyerDeclined": "Має відхилений запит",
+      "buyerPendingFromSeller": "Має запит в очікуванні від продавця",
+      "buyerSentPending": "Надіслав запит в очікуванні до seller01",
+      "buyerReactivated": "Поновлений у журналі модерації",
+      "buyerActive": "Активний покупець",
+      "managerDefault": "Менеджер платформи — модерація та реєстр"
     }
   },
   "home": {

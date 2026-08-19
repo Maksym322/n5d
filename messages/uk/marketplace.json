@@ -14,8 +14,10 @@
     "results": "{count, plural, =0 {Немає активів} one {# актив} few {# активи} many {# активів} other {# активів}}"
   },
   "search": {
-    "placeholder": "Знайдіть потрібний актив…",
-    "label": "Пошук активів"
+    "placeholder": "Опишіть, що ви шукаєте…",
+    "label": "Пошук активів",
+    "submit": "Знайти",
+    "searching": "Пошук…"
   },
   "categories": {
     "all": "Усі",
@@ -31,6 +33,18 @@
     "any": "Будь-яка",
     "apply": "Застосувати",
     "clear": "Очистити все"
+  },
+  "chips": {
+    "heading": "Застосовані фільтри",
+    "remove": "Прибрати фільтр: {label}",
+    "query": "«{value}»",
+    "priceRange": "{min} – {max}",
+    "priceMin": "Від {value}",
+    "priceMax": "До {value}"
+  },
+  "ticket": {
+    "upTo": "До {value}",
+    "any": "Будь-який"
   },
   "sort": {
     "label": "Сортування",

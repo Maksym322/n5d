@@ -31,7 +31,7 @@ export function ListingRow({
   const attributes: Attribute[] = [
     {
       label: t("listing.country"),
-      value: `${jurisdictionName(asset.jurisdiction)} (${asset.jurisdiction})`,
+      value: `${jurisdictionName(asset.jurisdiction, locale)} (${asset.jurisdiction})`,
     },
     { label: t("listing.category"), value: t(`enums.category.${asset.category}`) },
     { label: t("listing.dealType"), value: t(`enums.dealType.${asset.dealType}`) },

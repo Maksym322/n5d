@@ -133,6 +133,6 @@ These must work end-to-end on the deployed build.
 - demo data is dense enough for filters to be meaningful: 35 assets, 20 buyers, 12 sellers
 - **at least four seeded threads are `ACCEPTED`**, so a reviewer signing in sees anonymous listings and revealed counterparties side by side within seconds — without this contrast, D1 reads as missing data rather than as a mechanism
 - one seeded participant sits at the quota limit so D5 is visible without setup
-- automated tests pass: unit coverage of scoring, filters and permissions, plus two end-to-end scenarios
+- automated tests pass: unit coverage of the pure logic — filters, facet counts, money formatting, chart geometry and natural-language search narrowing — plus end-to-end scenarios for all four flow groups. Match scoring is not covered because that feature is descoped (ADR-6), and permissions are not, because they are RLS and asserting them properly needs a dedicated instance under several identities (ADR-14); the RLS invariants are listed in `DATA-MODEL.md` §9 and were verified manually
 - deployed URL reachable with documented demo accounts for all three roles
 - UI available in EN and UK with no hardcoded strings on in-scope pages

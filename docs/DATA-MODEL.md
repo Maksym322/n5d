@@ -159,7 +159,7 @@ create index assets_price_idx     on assets (asking_price_cents);
 create unique index assets_ref_idx on assets (public_ref);
 ```
 
-`public_ref` is the human identifier shown as `Asset #793` and used in URLs (D6). Exposing a sequential integer is acceptable here — the catalogue size is not confidential, and the alternative (a UUID in the URL) is worse for a marketplace people talk about by reference number.
+`public_ref` is the human identifier shown as `Asset #113` and used in URLs (D6). Exposing a sequential integer is acceptable here — the catalogue size is not confidential, and the alternative (a UUID in the URL) is worse for a marketplace people talk about by reference number.
 
 `price_history` holds six annual points for the Market Trend chart (ADR-15). JSONB rather than a child table: the series is always read whole, never queried into, and never updated independently of the asset.
 
@@ -457,16 +457,17 @@ create trigger assets_published_at
 | Sellers | 12 | 2 suspended (F4); all have both profile and identity rows |
 | Buyers | 20 | 1 suspended, 3 with `is_listed = false` |
 | Assets | 35 | 28 PUBLISHED, 4 DRAFT, 2 SUSPENDED, 1 SOLD; 20 `validated` |
-| Conversations | 11 | 6 PENDING, **4 ACCEPTED**, 1 DECLINED |
-| Messages | 29 | across 10 threads — every PENDING thread carries its initiator's one opening message |
+| Conversations | 14 | 9 PENDING, **4 ACCEPTED**, 1 DECLINED |
+| Messages | 32 | across 13 threads — every PENDING thread carries its initiator's one opening message |
 | Moderation log | 4 | one of each action |
 
 Content is realistic European M&A across the reference's categories — Bank, Fintech, Payment, EMI, Crypto — in DE, PL, NL, ES, UA, CZ, SE, MT, IE, with tickets from €200k to €40M. `price_history` gets six annual points per asset with plausible drift, so no two charts look alike.
 
-**Two seed requirements are load-bearing, not cosmetic:**
+**Three seed requirements are load-bearing, not cosmetic:**
 
 1. **At least four `ACCEPTED` threads spread across the demo accounts.** A reviewer signing in must see anonymous listings and revealed counterparties in the same session. Without that contrast, D1 reads as missing data rather than as a mechanism.
 2. **One participant at exactly 5 pending outbound requests**, so the quota is demonstrable without setup.
+3. **Both `/login` role-button accounts carry a PENDING thread as well.** `buyer01` holds two (p7, p8) beside its ACCEPTED one so the anonymous-vs-revealed contrast is on the first screen after clicking "Buyer"; `seller01` holds an incoming one (p9) so clicking "Seller" lands on a dashboard with something to accept or decline. Without these, the two default paths show only half the mechanism.
 
 Seeding runs through the service role, bypassing RLS.
 

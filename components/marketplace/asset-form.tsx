@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Constants } from "@/lib/types/database";
 import type { MyAssetDetail } from "@/lib/db/seller-assets";
 import type { AssetCategory, DealType } from "@/lib/db/assets";
@@ -51,6 +51,7 @@ export function AssetForm({
   currentYear: number;
 }) {
   const t = useTranslations("seller");
+  const locale = useLocale();
   const tm = useTranslations("marketplace");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -213,7 +214,7 @@ export function AssetForm({
           >
             {SEEDED_JURISDICTIONS.map((code) => (
               <option key={code} value={code}>
-                {jurisdictionName(code)}
+                {jurisdictionName(code, locale)}
               </option>
             ))}
           </Select>

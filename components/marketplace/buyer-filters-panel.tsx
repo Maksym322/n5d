@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { SEEDED_JURISDICTIONS, jurisdictionName } from "@/lib/jurisdictions";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import { useCatalogueParams } from "@/components/marketplace/use-catalogue-param
 // reads them the same way.
 export function BuyerFiltersPanel() {
   const t = useTranslations("seller");
+  const locale = useLocale();
   const { searchParams, setParams } = useCatalogueParams();
   const [open, setOpen] = useState(false);
 
@@ -89,7 +90,7 @@ export function BuyerFiltersPanel() {
               <option value="">{t("buyers.filters.any")}</option>
               {SEEDED_JURISDICTIONS.map((code) => (
                 <option key={code} value={code}>
-                  {jurisdictionName(code)}
+                  {jurisdictionName(code, locale)}
                 </option>
               ))}
             </Select>

@@ -377,7 +377,7 @@ async function main(): Promise<void> {
     fail("conversations insert (pending)", (await db.from("conversations").insert(missingPending.map(convRow))).error);
   }
 
-  // messages across 5 threads (~24). Script lives in ./fixtures; deterministic ids => safe upsert.
+  // messages across 13 threads (32). Script lives in ./fixtures; deterministic ids => safe upsert.
   const msgRows = Object.entries(THREAD_SCRIPT).flatMap(([convKey, lines]) =>
     lines.map(([senderKey, body], idx) => ({
       id: uuid5(`msg:${convKey}:${idx}`),

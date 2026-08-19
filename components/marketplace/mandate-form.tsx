@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Constants } from "@/lib/types/database";
 import type { BuyerMandate } from "@/lib/db/buyer";
 import type { AssetCategory, DealType } from "@/lib/db/assets";
@@ -25,6 +25,7 @@ const euroToCents = (v: string): number | null =>
 
 export function MandateForm({ initial }: { initial: BuyerMandate | null }) {
   const t = useTranslations("profile");
+  const locale = useLocale();
   const tm = useTranslations("marketplace");
   const [isPending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
@@ -137,7 +138,7 @@ export function MandateForm({ initial }: { initial: BuyerMandate | null }) {
                 checked={jurisdictions.includes(code)}
                 onChange={() => setJurisdictions((prev) => toggle(prev, code))}
               />
-              {jurisdictionName(code)}
+              {jurisdictionName(code, locale)}
             </label>
           ))}
         </div>

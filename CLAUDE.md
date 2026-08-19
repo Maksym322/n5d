@@ -12,11 +12,11 @@ Next 16: the request-interception convention is `proxy.ts`, not `middleware.ts`.
 ## Directory layout
 ```
 app/                routes (no src/ directory in this project)
-components/ui/      shadcn primitives — shared, do not restructure
+components/ui/      in-house primitives (ADR-17) — shared, do not restructure
 components/marketplace/
 components/admin/
 lib/db/             ALL database access lives here
-lib/ai/             AI features, each with a deterministic fallback
+lib/ai/             AI features w/ deterministic fallback (ADR-6) — NL search built, match score not
 lib/format.ts       money, dates, ticket ranges
 lib/types/          one file per entity, no barrel index.ts
 actions/            Server Actions
@@ -34,6 +34,8 @@ docs/
 - RLS is the security layer. The service role key is used **only** in `supabase/seed/` and `actions/moderation.ts` (ADR-2).
 - Money is `bigint` cents everywhere. Format at the presentation boundary only. Never float.
 - Filters, search and pagination live in URL search params, never in client state (ADR-3).
+- No user-visible string is assembled in `lib/`. Those modules have no locale — they return a
+  key or a value, `messages/` holds the wording, the component joins them (ADR-8).
 - Buyer anonymity is enforced by the schema and RLS, never by conditionals in components (ADR-10).
 - No `any`. No non-null assertions without a comment explaining why.
 - No barrel `index.ts` files — import directly. This keeps merge conflicts local.
@@ -48,8 +50,8 @@ Do not report done if any of these fail. If a failure is pre-existing, say which
 ## Migrations
 Append-only. Never edit an applied migration file. Regenerate types after every schema change:
 ```
-npx supabase gen types typescript --local > lib/types/database.ts
+npx supabase gen types typescript --linked > lib/types/database.ts
 ```
 
-## Ownership during parallel work
-When branches `feature/admin` or `feature/ai` are active, respect the boundaries in `AGENTS.md`.
+## Guardrails
+See `AGENTS.md` for the schema-ownership and shared-file guardrails.

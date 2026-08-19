@@ -41,6 +41,10 @@ export const DECLINED_CONVS: ConvDef[] = [
 ];
 
 // buyer05 sits at exactly 5 pending outbound (D5 demo). Distinct sellers => unique pairs.
+// p7-p9 put a PENDING thread on each of the two role-button accounts, so a reviewer clicking
+// "Buyer" or "Seller" lands on the mechanism without hunting: buyer01 sees anonymous pending
+// threads beside its revealed ACCEPTED one, and seller01 has a request to accept or decline.
+// Counterparties avoid seller03 (the F4 spec suspends it) and seller06 (the F2 spec reads it).
 export const PENDING_CONVS: ConvDef[] = [
   { key: "p1", buyer: "buyer05", seller: "seller06", assetIdx: 5, initiator: "buyer05", status: "PENDING" },
   { key: "p2", buyer: "buyer05", seller: "seller07", assetIdx: 6, initiator: "buyer05", status: "PENDING" },
@@ -48,6 +52,9 @@ export const PENDING_CONVS: ConvDef[] = [
   { key: "p4", buyer: "buyer05", seller: "seller09", assetIdx: 8, initiator: "buyer05", status: "PENDING" },
   { key: "p5", buyer: "buyer05", seller: "seller10", assetIdx: 9, initiator: "buyer05", status: "PENDING" },
   { key: "p6", buyer: "buyer07", seller: "seller02", assetIdx: null, initiator: "seller02", status: "PENDING" },
+  { key: "p7", buyer: "buyer01", seller: "seller04", assetIdx: 13, initiator: "buyer01", status: "PENDING" },
+  { key: "p8", buyer: "buyer01", seller: "seller07", assetIdx: 16, initiator: "buyer01", status: "PENDING" },
+  { key: "p9", buyer: "buyer08", seller: "seller01", assetIdx: 10, initiator: "buyer08", status: "PENDING" },
 ];
 
 export const CONV_DEFS: ConvDef[] = [...ACCEPTED_CONVS, ...DECLINED_CONVS, ...PENDING_CONVS];
@@ -106,13 +113,17 @@ export const THREAD_SCRIPT: Record<string, [string, string][]> = {
   // Opening message on a still-pending request. The initiator may post exactly one message
   // before acceptance (RLS msg_insert_accepted), so every PENDING thread carries the opener
   // its initiator sent — otherwise the recipient's thread list shows "No messages yet" and
-  // the request looks blank. buyer05 initiated p1–p5; seller02 initiated p6.
+  // the request looks blank. buyer05 initiated p1–p5; seller02 initiated p6; buyer01 initiated
+  // p7–p8; buyer08 initiated p9.
   p1: [["buyer05", "Hi — we'd like to open a conversation about your wallet business."]],
   p2: [["buyer05", "Hello — your processor fits our payments roll-up. Could we talk?"]],
   p3: [["buyer05", "Interested in your deposit book. Open to an intro call?"]],
   p4: [["buyer05", "Your custody platform matches our mandate — keen to learn more."]],
   p5: [["buyer05", "We'd like to explore your remittance business. Are you open to it?"]],
   p6: [["seller02", "We reached out as your mandate looks aligned with our processor."]],
+  p7: [["buyer01", "Hello — your payments business fits our thesis. Could we speak?"]],
+  p8: [["buyer01", "Interested in your acquiring portfolio — open to an intro call?"]],
+  p9: [["buyer08", "Hi — we would like to open a conversation about your EMI licence."]],
 };
 
 export const SEEDED_CONVERSATION_IDS: string[] = CONV_DEFS.map((c) => convId(c.key));

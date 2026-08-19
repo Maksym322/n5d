@@ -18,15 +18,15 @@ export async function SiteHeader() {
 
   return (
     <header className="border-b border-border bg-surface">
-      <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-4 px-6 py-4">
-        <div className="flex items-center gap-6">
+      <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-x-4 gap-y-4 px-4 py-3 sm:px-6 sm:py-4">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <Link href="/" className="flex items-baseline gap-2">
             <span className="text-lg font-bold text-foreground">{t("appName")}</span>
             <span className="hidden text-sm text-muted sm:inline">{t("tagline")}</span>
           </Link>
 
           {user ? (
-            <nav className="flex items-center gap-1 text-sm font-medium">
+            <nav className="flex flex-wrap items-center gap-1 text-sm font-medium">
               {/* Role-aware nav: the manager gets the registry + audit log; sellers manage listings
                   and browse the buyer directory; buyers browse the public catalogue. Messages +
                   profile are shared by the two transacting roles, not by the manager. */}
@@ -88,17 +88,17 @@ export async function SiteHeader() {
           ) : null}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <LocaleSwitcher />
           {user ? (
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-muted">
+            <div className="flex flex-col items-end gap-1 sm:flex-row sm:items-center sm:gap-3">
+              <span className="text-xs text-muted sm:text-sm">
                 {t("header.signedInAs", { role: roleLabel })}
               </span>
               <form action={signOut}>
                 <button
                   type="submit"
-                  className="rounded-pill border border-border px-4 py-1.5 text-sm font-medium text-foreground transition hover:bg-background"
+                  className="rounded-pill border border-border px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-background sm:px-4 sm:text-sm"
                 >
                   {t("header.signOut")}
                 </button>

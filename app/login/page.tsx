@@ -48,7 +48,9 @@ export default async function LoginPage() {
                       <span className="font-mono text-sm font-medium text-foreground">
                         {acc.email}
                       </span>
-                      <span className="text-xs text-muted">{acc.note}</span>
+                      <span className="text-xs text-muted">
+                        {t(`login.notes.${acc.noteKey}`)}
+                      </span>
                     </button>
                   </li>
                 ))}

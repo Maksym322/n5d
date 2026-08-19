@@ -21,30 +21,38 @@ export interface SeededAccount {
   status: SeededStatus;
   displayName: string;
   isListed?: boolean; // buyers only — directory opt-out (D1)
-  note: string; // one-line hint of what this account demonstrates, for the /login picker
+  // Which hint the /login picker shows for this account. A key, not a sentence: the wording is
+  // a user-visible string and belongs in messages/ (common.login.notes.*), while the choice of
+  // which hint applies is seed logic and belongs here.
+  noteKey: string;
 }
 
 const pad = (n: number): string => String(n).padStart(2, "0");
 
 // Notes describe the demo scenario each account exercises. They mirror the conversation and
-// moderation fixtures defined in the seed (accepted c1–c4, declined c5, pending p1–p6, etc.).
-function sellerNote(n: number, suspended: boolean): string {
-  if (suspended) return "Suspended — listings hidden from the catalogue (F4)";
-  if (n <= 4) return "Has an accepted thread — counterparty identity revealed";
-  if (n === 5) return "Declined an incoming request";
-  if (n >= 6 && n <= 10) return "Has a pending request from buyer05";
-  return "Active seller";
+// moderation fixtures defined in the seed (accepted c1–c4, declined c5, pending p1–p9, etc.).
+function sellerNoteKey(n: number, suspended: boolean): string {
+  if (suspended) return "sellerSuspended";
+  if (n === 1) return "sellerAcceptedPlusIncoming";
+  if (n === 4) return "sellerAcceptedPlusIncomingBuyer01";
+  if (n <= 4) return "acceptedRevealed";
+  if (n === 5) return "sellerDeclined";
+  if (n === 7) return "sellerIncomingTwo";
+  if (n >= 6 && n <= 10) return "sellerPendingFromBuyer05";
+  return "sellerActive";
 }
 
-function buyerNote(n: number, suspended: boolean, optOut: boolean): string {
-  if (suspended) return "Suspended — read-only access (F5)";
-  if (optOut) return "Directory opt-out (is_listed = false)";
-  if (n === 5) return "At the 5-request quota limit (D5)";
-  if (n <= 4) return "Has an accepted thread — counterparty identity revealed";
-  if (n === 6) return "Has a declined request";
-  if (n === 7) return "Has a pending request from a seller";
-  if (n === 10) return "Reactivated in the moderation log";
-  return "Active buyer";
+function buyerNoteKey(n: number, suspended: boolean, optOut: boolean): string {
+  if (suspended) return "buyerSuspended";
+  if (optOut) return "buyerOptOut";
+  if (n === 5) return "buyerAtQuota";
+  if (n === 1) return "buyerAcceptedPlusPending";
+  if (n <= 4) return "acceptedRevealed";
+  if (n === 6) return "buyerDeclined";
+  if (n === 7) return "buyerPendingFromSeller";
+  if (n === 8) return "buyerSentPending";
+  if (n === 10) return "buyerReactivated";
+  return "buyerActive";
 }
 
 const sellers: SeededAccount[] = Array.from({ length: 12 }, (_, i) => {
@@ -56,7 +64,7 @@ const sellers: SeededAccount[] = Array.from({ length: 12 }, (_, i) => {
     role: "SELLER",
     status: suspended ? "SUSPENDED" : "ACTIVE",
     displayName: `Seller #${pad(n)}`,
-    note: sellerNote(n, suspended),
+    noteKey: sellerNoteKey(n, suspended),
   };
 });
 
@@ -71,7 +79,7 @@ const buyers: SeededAccount[] = Array.from({ length: 20 }, (_, i) => {
     status: suspended ? "SUSPENDED" : "ACTIVE",
     displayName: `Buyer #${pad(n)}`,
     isListed: !optOut,
-    note: buyerNote(n, suspended, optOut),
+    noteKey: buyerNoteKey(n, suspended, optOut),
   };
 });
 
@@ -81,7 +89,7 @@ const manager: SeededAccount = {
   role: "MANAGER",
   status: "ACTIVE",
   displayName: "Manager #01",
-  note: "Platform manager — moderation and registry",
+  noteKey: "managerDefault",
 };
 
 // Ordered sellers → buyers → manager. The seed indexes its domain arrays (headlines,

@@ -28,7 +28,12 @@ test("search finds an asset by its reference number", async ({ page }) => {
 
   // The ref is an integer, not part of the ilike text search — this exercises the OR'd
   // public_ref match so a user searching "Asset #100" actually finds it.
+  //
+  // Search is submit-driven since natural-language search landed (ADR-6), hence the Enter. A
+  // query that parses as a reference short-circuits past the model, so this stays deterministic
+  // and needs no API key.
   await page.getByRole("searchbox").fill("Asset #100");
+  await page.getByRole("searchbox").press("Enter");
   await expect(page.getByRole("heading", { name: "Asset #100" })).toBeVisible();
 });
 

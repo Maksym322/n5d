@@ -33,7 +33,7 @@ export function RegistrySearch({ tab }: { tab: "buyers" | "sellers" | "assets" }
   }
 
   return (
-    <div className="relative min-w-[16rem] flex-1">
+    <div className="relative w-full flex-1 sm:w-auto sm:min-w-[16rem]">
       <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
       <Input
         type="search"

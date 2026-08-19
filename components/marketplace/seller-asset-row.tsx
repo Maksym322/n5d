@@ -35,7 +35,7 @@ export function SellerAssetRow({
         </div>
         <p className="text-xs text-muted">
           {tm(`enums.category.${asset.category}`)} ·{" "}
-          {jurisdictionName(asset.jurisdiction)} · {tm(`enums.dealType.${asset.dealType}`)}
+          {jurisdictionName(asset.jurisdiction, locale)} · {tm(`enums.dealType.${asset.dealType}`)}
           {asset.publishedAt
             ? ` · ${t("dashboard.listedOn", { date: formatMonthYear(asset.publishedAt, locale) })}`
             : ""}

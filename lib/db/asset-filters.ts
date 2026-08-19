@@ -26,6 +26,18 @@ export type CategoryFacets = Record<AssetCategory, number>;
 
 export const ASSET_PAGE_SIZE = 10;
 
+// The URL search-param keys that make up the filter slice of catalogue state — the write-side
+// counterpart to `parseAssetFilters`. Every key is always present so a patch can clear a stale
+// value rather than inheriting it (`useCatalogueParams.setParams` deletes null keys).
+export type CatalogueFilterParams = {
+  category: string | null;
+  jurisdiction: string | null;
+  deal_type: string | null;
+  price_min: string | null;
+  price_max: string | null;
+  q: string | null;
+};
+
 const SORTS: readonly AssetSort[] = ["newest", "price_asc", "price_desc"];
 
 type RawParams = Record<string, string | string[] | undefined>;
@@ -86,6 +98,21 @@ export function parseAssetFilters(sp: RawParams): AssetFilters {
       ? (rawSort as AssetSort)
       : "newest",
     page: Number.isInteger(rawPage) && rawPage >= 1 ? rawPage : 1,
+  };
+}
+
+// A patch that resets the whole filter slice, keeping only a free-text query. This is the
+// deterministic search path: exactly what the catalogue did before natural-language search, and
+// what it still does whenever interpretation is unavailable (ADR-6).
+export function clearedFilterParams(q: string | null): CatalogueFilterParams {
+  const trimmed = q?.trim();
+  return {
+    category: null,
+    jurisdiction: null,
+    deal_type: null,
+    price_min: null,
+    price_max: null,
+    q: trimmed ? trimmed : null,
   };
 }
 

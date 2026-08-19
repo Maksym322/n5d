@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { formatTicketRange } from "@/lib/format";
 import { getAdminBuyer, listModerationLog } from "@/lib/db/admin";
 import { AccountStatusBadge } from "@/components/admin/status-badge";
@@ -26,6 +26,7 @@ export default async function AdminBuyerDetailPage({
   });
   const t = await getTranslations("admin");
   const tm = await getTranslations("marketplace");
+  const locale = await getLocale();
   const action = buyer.status === "ACTIVE" ? "SUSPEND" : "REACTIVATE";
 
   const list = (items: string[]) => (items.length ? items.join(", ") : t("detail.none"));
@@ -71,7 +72,13 @@ export default async function AdminBuyerDetailPage({
               t("detail.investorType"),
               buyer.investorType ? tm(`enums.investorType.${buyer.investorType}`) : null,
             ],
-            [t("detail.ticket"), formatTicketRange(buyer.ticketMinCents, buyer.ticketMaxCents)],
+            [t("detail.ticket"), formatTicketRange(
+              buyer.ticketMinCents,
+              buyer.ticketMaxCents,
+              { upTo: (value) => tm("ticket.upTo", { value }), any: tm("ticket.any") },
+              "EUR",
+              locale,
+            )],
             [t("detail.categories"), list(buyer.categories.map((c) => tm(`enums.category.${c}`)))],
             [t("detail.jurisdictions"), list(buyer.jurisdictions)],
             [t("detail.dealTypes"), list(buyer.dealTypes.map((d) => tm(`enums.dealType.${d}`)))],

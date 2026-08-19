@@ -9,9 +9,11 @@ import {
   parseAssetFilters,
   widenSuggestionKey,
 } from "@/lib/db/assets";
+import { isNlSearchEnabled } from "@/lib/ai/gemini";
 import { buttonClasses } from "@/components/ui/button";
 import { SearchInput } from "@/components/marketplace/search-input";
 import { CategoryPills } from "@/components/marketplace/category-pills";
+import { ActiveFilterChips } from "@/components/marketplace/active-filter-chips";
 import { FiltersPanel } from "@/components/marketplace/filters-panel";
 import { SortSelect } from "@/components/marketplace/sort-select";
 import { ListingRow } from "@/components/marketplace/listing-row";
@@ -42,11 +44,12 @@ export default async function AssetsPage({
 
       <div className="space-y-4">
         <div className="flex flex-wrap items-center gap-3">
-          <SearchInput />
+          <SearchInput aiEnabled={isNlSearchEnabled()} />
           <FiltersPanel />
           <SortSelect />
         </div>
         <CategoryPills facets={facets} />
+        <ActiveFilterChips />
       </div>
 
       <p className="text-sm text-muted">{t("catalogue.results", { count: total })}</p>

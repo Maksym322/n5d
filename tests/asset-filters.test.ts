@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+  clearedFilterParams,
   parseAssetFilters,
   parseRefQuery,
   hasActiveFilters,
@@ -118,5 +119,25 @@ describe("widenSuggestionKey", () => {
     expect(widenSuggestionKey({ ...base, category: "BANK", q: "x" })).toBe("widenCategory");
     expect(widenSuggestionKey({ ...base, q: "x" })).toBe("widenSearch");
     expect(widenSuggestionKey(base)).toBe("generic");
+  });
+});
+
+describe("clearedFilterParams", () => {
+  it("nulls every filter key so a stale interpretation cannot survive a new search", () => {
+    expect(clearedFilterParams("fintech")).toEqual({
+      category: null,
+      jurisdiction: null,
+      deal_type: null,
+      price_min: null,
+      price_max: null,
+      q: "fintech",
+    });
+  });
+
+  it("treats an empty or whitespace-only query as no query at all", () => {
+    expect(clearedFilterParams("   ").q).toBeNull();
+    expect(clearedFilterParams("").q).toBeNull();
+    expect(clearedFilterParams(null).q).toBeNull();
+    expect(clearedFilterParams("  german fintech  ").q).toBe("german fintech");
   });
 });

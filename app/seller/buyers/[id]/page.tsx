@@ -37,7 +37,7 @@ export default async function BuyerDetailPage({
       : t("buyers.card.any");
   const jurisdictionsText =
     buyer.jurisdictions.length > 0
-      ? buyer.jurisdictions.map((j) => jurisdictionName(j)).join(", ")
+      ? buyer.jurisdictions.map((j) => jurisdictionName(j, locale)).join(", ")
       : t("buyers.card.any");
 
   const attributes: Attribute[] = [
@@ -47,7 +47,13 @@ export default async function BuyerDetailPage({
     },
     {
       label: t("buyers.card.ticket"),
-      value: formatTicketRange(buyer.ticketMinCents, buyer.ticketMaxCents, "EUR", locale),
+      value: formatTicketRange(
+        buyer.ticketMinCents,
+        buyer.ticketMaxCents,
+        { upTo: (value) => tm("ticket.upTo", { value }), any: tm("ticket.any") },
+        "EUR",
+        locale,
+      ),
     },
     { label: t("buyers.card.categories"), value: categoriesText },
     { label: t("buyers.card.jurisdictions"), value: jurisdictionsText },

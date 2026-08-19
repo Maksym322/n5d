@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Constants } from "@/lib/types/database";
 import { SEEDED_JURISDICTIONS, jurisdictionName } from "@/lib/jurisdictions";
 import { cn } from "@/lib/cn";
@@ -16,6 +16,7 @@ import { useCatalogueParams } from "@/components/marketplace/use-catalogue-param
 // stored in the URL as cents (ADR-4); applied on submit rather than per keystroke.
 export function FiltersPanel() {
   const t = useTranslations("marketplace");
+  const locale = useLocale();
   const { searchParams, setParams } = useCatalogueParams();
   const [open, setOpen] = useState(false);
 
@@ -28,6 +29,21 @@ export function FiltersPanel() {
   const [dealType, setDealType] = useState(searchParams.get("deal_type") ?? "");
   const [priceMin, setPriceMin] = useState(centsToEuro(searchParams.get("price_min")));
   const [priceMax, setPriceMax] = useState(centsToEuro(searchParams.get("price_max")));
+
+  // These four are seeded from the URL, so anything that writes those params from outside this
+  // panel — a removed chip, "Clear all", an interpreted search, a pasted link — would otherwise
+  // leave the selects showing the previous values. Same render-phase resync the search box uses.
+  const paramSignature = ["jurisdiction", "deal_type", "price_min", "price_max"]
+    .map((k) => searchParams.get(k) ?? "")
+    .join("|");
+  const [prevSignature, setPrevSignature] = useState(paramSignature);
+  if (paramSignature !== prevSignature) {
+    setPrevSignature(paramSignature);
+    setJurisdiction(searchParams.get("jurisdiction") ?? "");
+    setDealType(searchParams.get("deal_type") ?? "");
+    setPriceMin(centsToEuro(searchParams.get("price_min")));
+    setPriceMax(centsToEuro(searchParams.get("price_max")));
+  }
 
   const activeCount = ["jurisdiction", "deal_type", "price_min", "price_max"].filter(
     (k) => searchParams.get(k),
@@ -96,7 +112,7 @@ export function FiltersPanel() {
               <option value="">{t("filters.any")}</option>
               {SEEDED_JURISDICTIONS.map((code) => (
                 <option key={code} value={code}>
-                  {jurisdictionName(code)}
+                  {jurisdictionName(code, locale)}
                 </option>
               ))}
             </Select>
